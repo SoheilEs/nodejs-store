@@ -2,7 +2,6 @@
 /env
 env
 
-node_modules
+# dependencies
 /node_modules
-**/node_modules
-node_modules/
+
