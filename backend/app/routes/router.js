@@ -10,7 +10,7 @@ const router = require("express").Router()
 router.use("/",HomePageRoutes)
 router.use("/user",UserAuthRoutes)
 router.use("/dev",DeveloperRoutes)
-router.use("/category",CategoryRoutes)
+router.use("/category",VerifyAccessToken,checkRole("ADMIN"),CategoryRoutes)
 router.use("/blog",VerifyAccessToken,checkRole("ADMIN"),BlogRoutes)
 
 module.exports = {

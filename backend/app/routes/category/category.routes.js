@@ -11,6 +11,32 @@ const router = require("express").Router()
  * 
  */
 
+
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          CreateCategorey:
+ *              type: object
+ *              required:
+ *                  -   title
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                  parent:
+ *                      type: string
+ *          UpdateCategory:
+ *              type: object
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                       
+ *         
+ *             
+ *            
+ */
+
 /**
  * @swagger
  * /category :
@@ -18,14 +44,14 @@ const router = require("express").Router()
  *     summary: Create Category
  *     description: create category and subcategoreis
  *     tags: [Category]
- *     parameters:
- *     -    name: title
- *          type: string
- *          required: true
- *          in: formData
- *     -    name: parent
- *          type: string
- *          in: formData
+ *     requestBody:
+ *          content:
+ *              application/x-www-form-urlencoded:
+ *                  schema:
+ *                      $ref: "#/components/schemas/CreateCategorey"
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/CreateCategorey"
  *     responses:
  *          201:
  *              description: Created
@@ -42,7 +68,7 @@ router.post("/",categoryController.createCategory)
  *  get:
  *      summary: Get Parent Categories
  *      tags: [Category]
- *      description: list all parent categories
+ *      description: list all parent categories      
  *      responses:
  *          200:
  *              description: Success
@@ -129,10 +155,15 @@ router.delete("/delete/:id",categoryController.removeCategory)
  *          in: path
  *          required: true
  *          type: string
- *      -   name: title
- *          required: true
- *          type: string
- *          in: formData
+ *      requestBody:
+ *          content:
+ *              application/x-www-form-urlencoded:
+ *                  schema:
+ *                      $ref: "#/components/schemas/UpdateCategory"
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/UpdateCategory"
+ *                  
  *      responses:
  *          200:
  *              description: Success

@@ -34,14 +34,24 @@ module.exports = class Application{
             swaggerDefinition:{
                 openapi:"3.0.0",
                 info:{
-                    title: "KifChiem Store",
+                    title: "Store app",
                     version: "2.0.0",
-                    description:"بزرگترین مرکز فروش کیف و چمدان"
+                    description:"بزرگترین بزرگترین فروشگاه اینترنتی"
                 },
+                components:{
+                    securitySchemes : {
+                        BearerAuth : {
+                            type : "http",
+                            scheme : "bearer",
+                            bearerFormat : "JWT"
+                        }
+                    }
+                }, 
+                security : [{BearerAuth : []}]
             },
             apis : ["./app/routes/**/*.js"]
         }),
-        {explorer:true}
+        {explorer:true},
         ))
     }
     createServer(){

@@ -4,7 +4,7 @@ const { userModel } = require("../../models/users");
 const JWT = require("jsonwebtoken");
 
 const getToken = (headers) => {
-  const [bearer, token] = headers?.["access-token"]?.split(" ") || [];
+  const [bearer, token] = headers?.authorization?.split(" ") || [];
   if (token && ["bearer", "Bearer"].includes(bearer)) return token;
   throw createError.Unauthorized(
     "حساب کاربری شناسایی نشد. وارد حساب کاربری خود شوید"
