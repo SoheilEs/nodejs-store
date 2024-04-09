@@ -64,6 +64,14 @@ const deleteFile = (fileAddress) =>{
   
 }
 
+const listOfimagesFromRequest= (files,fileUploadPath)=> {
+  if(files?.length > 0){
+      return (files.map(file => path.join(fileUploadPath,file.filename))).map(item => item.replace(/\\/g,"/"))
+  }else{
+    return []
+  }
+}
+
 
 module.exports = {
   randomNumberGen,
@@ -71,4 +79,5 @@ module.exports = {
   signRfreshToken,
   VerifyRefreshToken,
   deleteFile,
+  listOfimagesFromRequest
 };

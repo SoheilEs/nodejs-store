@@ -1,4 +1,4 @@
-const { Schema, models, model } = require("mongoose");
+const { Schema, models, model, Types } = require("mongoose");
 
 const userSchema = new Schema({
   first_name: { type: String},
@@ -17,7 +17,8 @@ const userSchema = new Schema({
   bills: { type: [], default: [] },
   discount: { type: Number, default: 0 },
   birthday: { type: String },
-  role:{type:[String],default:["USER"]}
+  role:{type:[String],default:["USER"]},
+  courses:{type:[Types.ObjectId],ref:"Course",default:[]}
 });
 
 const userModel = models.User || model("User", userSchema);

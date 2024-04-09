@@ -23,7 +23,7 @@ class BlogController extends Controller {
         blogDataBody.filename
       );
       const { title, text, short_text, category, tags } = blogDataBody;
-      const image = req.body.image;
+      const image = req.body.image.replace(/\\/g,"/")
       await this.#service.createBlog({
         author,
         title,
