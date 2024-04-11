@@ -17,6 +17,8 @@ const addProductSchema = Joi.object({
     weight: Joi.number().allow(null,0,"0","").error(createError.BadRequest("وزن وارد شده صحیح نمی باشد")),
     length: Joi.number().allow(null,0,"0","").error(createError.BadRequest("طول وارد شده صحیح نمی باشد")),
     color: Joi.array().allow(null,0,"0","").error(createError.BadRequest("رنگ های وارد شده صحیح نمی باشد")),
+    type: Joi.string().regex(/(virtual|phisical)/i).required().error(createError.BadRequest("نوع محصول باید مشخص باشد")),
+    colors: Joi.array().min(0).max(20).error(createError.BadRequest("رنگ های انتخابی  نمیتواند بیشتر از 20 ایتم باشد")),
 })
 
 module.exports = {

@@ -3,5 +3,10 @@
 env
 
 # dependencies
-/node_modules
+node_modules/*
+node_modules
+public/uploads
+uploads
 
+text.txt
+/text.txt

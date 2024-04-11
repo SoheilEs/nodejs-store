@@ -4,8 +4,8 @@ const blogService = require("./blog.service");
 const { createBlogSchema } = require("../../validators/blog/blog.schema");
 const path = require("path");
 const { deleteFile } = require("../../../utils/function");
-const { create } = require("domain");
-const createHttpError = require("http-errors");
+const {StatusCodes} = require("http-status-codes")
+
 
 class BlogController extends Controller {
   #service;
@@ -33,9 +33,9 @@ class BlogController extends Controller {
         category,
         tags,
       });
-      return res.status(201).json({
+      return res.status(StatusCodes.CREATED).json({
         data: {
-          statusCode: 201,
+          statusCode: StatusCodes.CREATED,
           message: "ایجاد بلاگ با موفقیت انجام گرفت",
         },
       });
@@ -48,9 +48,9 @@ class BlogController extends Controller {
     try {
       const { id } = req.params;
       const result = await this.#service.getSingleBlog(id);
-      return res.status(200).json({
+      return res.status(StatusCodes.OK).json({
         data: {
-          statusCode: 200,
+          statusCode: StatusCodes.OK,
           result,
         },
       });
@@ -61,9 +61,9 @@ class BlogController extends Controller {
   async ListAllBlogs(req, res, next) {
     try {
       const blogs = await this.#service.getAllBlogs();
-      return res.status(200).json({
+      return res.status(StatusCodes.OK).json({
         data: {
-          statusCode: 200,
+          statusCode: StatusCodes.OK,
           blogs,
         },
       });
@@ -81,9 +81,9 @@ class BlogController extends Controller {
     try {
       const { id } = req.params;
       const result = await this.#service.deleteBlogById(id);
-      return res.status(200).json({
+      return res.status(StatusCodes.OK).json({
         data: {
-          statusCode: 200,
+          statusCode: StatusCodes.OK,
           message: result,
         },
       });
@@ -95,7 +95,7 @@ class BlogController extends Controller {
     try {
       const { id } = req.params;
       const { _id: author } = req.user;
-      console.log(author);
+      
 
       if (req?.body?.fileUploadPath && req?.body?.filename) {
         req.body.image = path.join(req.body.fileUploadPath, req.body.filename);
@@ -103,9 +103,9 @@ class BlogController extends Controller {
 
       const data = req.body;
       const result = await this.#service.updateBlog(author,id, data);
-      return res.status(201).json({
+      return res.status(StatusCodes.OK).json({
         data: {
-          statusCode: 201,
+          statusCode: StatusCodes.OK,
           message: result,
         },
       });

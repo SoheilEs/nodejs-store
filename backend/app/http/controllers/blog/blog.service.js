@@ -79,8 +79,9 @@ class BlogService {
     Object.keys(data).forEach((key) => {
       if(blackListFields.includes(key)) delete data[key]
       if (typeof data[key] === "string") data[key] = data[key].trim();
-      if (Array.isArray(data[key]) && Array.length > 0)
+      if (Array.isArray(data[key]) && data[key].length > 0)
         data[key] = data[key].map((item) => item.trim());
+      if (Array.isArray(data[key]) && data[key].length === 0) delete data[key]
       if (nullishData.includes(data[key])) delete data[key];
     });
     if (!isValidObjectId(id))
@@ -96,6 +97,8 @@ class BlogService {
       throw createError.InternalServerError("بروز رسانی صورت نگرفت");
     return "بروز رسانی با موفقیت انجام گردید";
   }
+
+
   async checkExsistBlog(id) {
     return await this.#BlogModel.findById(id).populate([
       { path: "category" },

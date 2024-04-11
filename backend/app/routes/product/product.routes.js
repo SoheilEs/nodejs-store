@@ -24,6 +24,7 @@ const router = require("express").Router();
  *                  -   price
  *                  -   count
  *                  -   discount
+ *                  -   type
  *
  *              properties:
  *                  title:
@@ -55,10 +56,56 @@ const router = require("express").Router();
  *                      type: number
  *                  length:
  *                      type: number
- *                  color:
+ *                  colors:
  *                      type: array
  *                      items:
  *                        type: string
+ *                  type:
+ *                      type: string
+ *                      enum: [virtual,physical]
+ *                      
+ * 
+ * 
+ *          EditProduct:
+ *                type: object
+ *                properties:
+ *                  title:
+ *                      type: string
+ *                  short_text:
+ *                      type: string
+ *                  text:
+ *                      type: string
+ *                  category:
+ *                      type: string
+ *                  price:
+ *                      type: number
+ *                  discount:
+ *                      type: number
+ *                  count:
+ *                      type: number
+ *                  images:
+ *                      type: array
+ *                      items:
+ *                        type: string
+ *                        format: binary
+ *                  tags:
+ *                      type: array
+ *                  height:
+ *                      type: number
+ *                  width:
+ *                      type: number
+ *                  weight:
+ *                      type: number
+ *                  length:
+ *                      type: number
+ *                  colors:
+ *                      type: array
+ *                      items:
+ *                        type: string
+ *                  type:
+ *                      type: string
+ *                      enum: [virtual,physical]
+ *      
  *
  *
  *
@@ -89,7 +136,7 @@ router.post(
   "/",
   uploadFile.array("images",10),
   stringToArray("tags"),
-  stringToArray("color"),
+  stringToArray("colors"),
   productController.addProducts
 );
 
@@ -100,6 +147,11 @@ router.post(
  *        tags: [Product]
  *        summary: Get Products
  *        description: Lis All Added Products
+ *        parameters: 
+ *            -   in: query
+ *                name: search
+ *                type: string
+ *                description: text for search in title, text, short_text
  *        responses:
  *            200:
  *              description: Success
@@ -107,9 +159,82 @@ router.post(
  *              description: NotFound
  */
 router.get("/", productController.getProducts);
+
+
+/**
+ * @swagger
+ *  /product/{id}:
+ *    get:
+ *        tags: [Product]
+ *        summary: Get Singel Product 
+ *        description: Get Product By ID
+ *        parameters:
+ *          -     in: path
+ *                name: id
+ *                required: true
+ *                type: string
+ *        responses:
+ *            200:
+ *              description: Success
+ *            404:
+ *              description: NotFound
+ */
+
 router.get("/:id", productController.getProductById);
+
+/**
+ * @swagger
+ *  /product/{id}:
+ *    delete:
+ *        tags: [Product]
+ *        summary: Delete Product 
+ *        description: Delete Product By ID
+ *        parameters:
+ *          -     in: path
+ *                name: id
+ *                required: true
+ *                type: string
+ *        responses:
+ *            200:
+ *              description: Success
+ *            404:
+ *              description: NotFound
+ */
+
 router.delete("/:id", productController.deleteProductById);
-router.patch("/:id", productController.editProductById);
+
+
+/**
+ * @swagger
+ *  /product/{id}:
+ *    patch:
+ *        tags: [Product]
+ *        summary: Edit Product
+ *        description: Edit Product Fields
+ *        parameters:
+ *            -   in: path
+ *                name: id
+ *                type: string
+ *                required: true
+ *        requestBody:
+ *            content:
+ *                 multipart/form-data:
+ *                     schema:
+ *                        $ref: "#/components/schemas/EditProduct"
+ *        responses:
+ *            200:
+ *              description: Sucess
+ *            404:
+ *              description: NotFound
+ *            401:
+ *              description: Unauthorized
+ *            500:
+ *              description: Internal Server Error
+ */
+
+router.patch("/:id", uploadFile.array("images",10),
+stringToArray("tags"),
+stringToArray("colors"),productController.updateProductById);
 
 module.exports = {
   ProductRoutes: router,

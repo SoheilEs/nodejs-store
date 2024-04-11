@@ -9,26 +9,28 @@ const productSchema = new Schema({
   tags:{type:[String],default:[]},
   category:{type: Types.ObjectId,ref:"Category",required:true},
   commments:{type:[commentSchema],default:[]},
-  likes :{types:[Types.ObjectId],default:[]},
-  dislikes:{types:[Types.ObjectId],default:[]},
-  bookmarks:{types:[Types.ObjectId],default:[]},
+  likes :{type:[Types.ObjectId],default:[]},
+  dislikes:{type:[Types.ObjectId],default:[]},
+  bookmarks:{type:[Types.ObjectId],default:[]},
   price:{type:Number,default:0},
   discount:{type:Number,default:0},
   count:{type:Number},
   type:{type: String, required: true }, // virtual( online tutorilas: Node course, Python course) - physical(sells: book, bag ....)
   format:{type: String},
-  supplier:{type: String, required: true },
-  feture:{type:Object,default:{
+  supplier:{type: String,ref:"User" ,required: true },
+  features:{type:Object,default:{
     length:"",
     height: "",
     width:"",
     weight:"",
-    color:[],
+    colors:[],
     model:[],
     madeIn:""
   }}
 
 },{versionKey:false});
+
+productSchema.index({title:"text",short_text:"text",text:"text"})
 
 const productModel = models.Product || model("Product", productSchema);
 

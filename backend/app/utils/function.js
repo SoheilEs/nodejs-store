@@ -56,7 +56,9 @@ const VerifyRefreshToken = (token) => {
 };
 
 const deleteFile = (fileAddress) =>{
+  console.log(fileAddress);
   if(fileAddress){
+
     const pathFile = path.join(__dirname,"..","..","public",fileAddress)
     if(fs.existsSync(pathFile)) fs.unlinkSync(pathFile)
 
@@ -72,6 +74,39 @@ const listOfimagesFromRequest= (files,fileUploadPath)=> {
   }
 }
 
+const copyObject = (obj)=>{
+  return JSON.parse(JSON.stringify(obj))
+}
+
+const setFeatures = (body)=>{
+  const {colors, width, weight, height,length} = body
+  let features = {}
+  features.colors = colors
+  if(!isNaN(+weight)||!isNaN(+width)||!isNaN(+height)||!isNaN(+length)){
+    if (!width) features.width = 0;
+    else features.weight = width;
+    if (!height) features.height = 0;
+    else features.height = height;
+    if (!length) features.length = 0;
+    else features.length = length;
+    if (!weight) features.weight = 0;
+    else features.weight = weight;
+  }
+  return features
+}
+
+const deleteInvalidPropertyInObject =(data={},blackListFields=[])=>{
+  let nullishData = ["", " ", null, undefined, NaN, 0, "0"];
+  Object.keys(data).forEach((key) => {
+    if (blackListFields.includes(key)) delete data[key];
+    if (typeof data[key] === "string") data[key] = data[key].trim();
+    if (Array.isArray(data[key]) && data[key].length > 0)
+      data[key] = data[key].map((item) => item.trim());
+    if (Array.isArray(data[key]) && data[key].length === 0) delete data[key];
+    if (nullishData.includes(data[key])) delete data[key];
+  });
+}
+
 
 module.exports = {
   randomNumberGen,
@@ -79,5 +114,8 @@ module.exports = {
   signRfreshToken,
   VerifyRefreshToken,
   deleteFile,
-  listOfimagesFromRequest
+  listOfimagesFromRequest,
+  copyObject,
+  setFeatures,
+  deleteInvalidPropertyInObject
 };
