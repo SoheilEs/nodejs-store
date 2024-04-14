@@ -1,14 +1,16 @@
 const autoBind = require("auto-bind");
-const Controller = require("../controller");
+const Controller = require("../../controller");
 const productService = require("./product.service");
-const { addProductSchema } = require("../../validators/product/product.schema");
+const {
+  addProductSchema,
+} = require("../../../validators/product/product.schema");
 const { StatusCodes } = require("http-status-codes");
 const {
   deleteFile,
   listOfimagesFromRequest,
   copyObject,
   setFeatures,
-} = require("../../../utils/function");
+} = require("../../../../utils/function");
 class ProductController extends Controller {
   #service;
   constructor() {
@@ -55,8 +57,8 @@ class ProductController extends Controller {
         type,
       });
       return res.status(StatusCodes.CREATED).json({
+        statusCode: StatusCodes.CREATED,
         data: {
-          statusCode: StatusCodes.CREATED,
           result: product,
           message: "محصول با موفقیت ایجاد گردید",
         },
@@ -71,9 +73,9 @@ class ProductController extends Controller {
       const search = req.query.search || "";
       const products = await this.#service.getProducts(search);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
           products,
-          statusCode: StatusCodes.OK,
         },
       });
     } catch (error) {
@@ -85,8 +87,8 @@ class ProductController extends Controller {
       const id = req.params.id;
       const result = await this.#service.deleteProduct(id);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: result,
         },
       });
@@ -99,9 +101,9 @@ class ProductController extends Controller {
       const { id } = req.params;
       const product = await this.#service.getProductById(id);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
           product,
-          statusCode: StatusCodes.OK,
         },
       });
     } catch (error) {
@@ -112,7 +114,7 @@ class ProductController extends Controller {
     try {
       const { id } = req.params;
       const { _id: supplier } = req.user;
-     
+
       const data = copyObject(req.body);
       data.images = listOfimagesFromRequest(
         req?.files || [],
@@ -121,8 +123,8 @@ class ProductController extends Controller {
       data.features = setFeatures(req.body);
       const result = await this.#service.updateProduct(supplier, id, data);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: result,
         },
       });
@@ -132,6 +134,5 @@ class ProductController extends Controller {
     }
   }
 }
-
 
 module.exports = new ProductController();

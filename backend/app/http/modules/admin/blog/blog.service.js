@@ -1,8 +1,20 @@
 const autoBind = require("auto-bind");
-const { blogModel } = require("../../../models/blogs");
+const { blogModel } = require("../../../../models/blogs");
 const { isValidObjectId } = require("mongoose");
 const createError = require("http-errors");
-const { deleteFile } = require("../../../utils/function");
+const {
+  deleteFile,
+  deleteInvalidPropertyInObject,
+} = require("../../../../utils/function");
+
+const BlogBlackList = {
+  BOOKMARKS: "bookmarks",
+  DISLIKES: "dislikes",
+  COMMENTS: "commments",
+  LIKES: "likes",
+  AUTHOR: "author",
+};
+Object.freeze(BlogBlackList);
 
 class BlogService {
   #BlogModel;
@@ -72,32 +84,23 @@ class BlogService {
       throw createError.InternalServerError("حذف بلاگ انجام نشد");
     return "بلاگ با موفقیت حذف گردید";
   }
-  async updateBlog(author,id, data) {
-
-    let nullishData = ["", " ", null, undefined, NaN, 0, "0"];
-    let blackListFields = ["bookmarks","dislikes","commments","likes","author"]
-    Object.keys(data).forEach((key) => {
-      if(blackListFields.includes(key)) delete data[key]
-      if (typeof data[key] === "string") data[key] = data[key].trim();
-      if (Array.isArray(data[key]) && data[key].length > 0)
-        data[key] = data[key].map((item) => item.trim());
-      if (Array.isArray(data[key]) && data[key].length === 0) delete data[key]
-      if (nullishData.includes(data[key])) delete data[key];
-    });
+  async updateBlog(author, id, data) {
+    let blackListFields = Object.values(BlogBlackList);
+    deleteInvalidPropertyInObject(data, blackListFields);
     if (!isValidObjectId(id))
       throw createError.NotFound("شناسه بلاگ نامعتبر است");
     const blog = await this.checkExsistBlog(id);
-    if(blog.author !== author) throw createError.Unauthorized("شما مجاز به انجام این کار نیستید")
+    if (blog.author !== author)
+      throw createError.Unauthorized("شما مجاز به انجام این کار نیستید");
     if (!blog?._id) throw createError.NotFound("بلاگ یافت نشد");
     const updateBlog = await this.#BlogModel.updateOne(
       { _id: blog._id },
-      { $set: data  }
+      { $set: data }
     );
     if (updateBlog.modifiedCount === 0)
       throw createError.InternalServerError("بروز رسانی صورت نگرفت");
     return "بروز رسانی با موفقیت انجام گردید";
   }
-
 
   async checkExsistBlog(id) {
     return await this.#BlogModel.findById(id).populate([

@@ -36,7 +36,7 @@ const signRfreshToken = (userId) => {
     JWT.sign(payload, REFRESH_TOKEN_KEY, options, async (err, token) => {
       if (err)
         reject(createError.InternalServerError("خطای سمت سرور رخ داده است"));
-      await redisClient.SETEX(user._id.valueOf(),(365*24*60*60),token)
+      await redisClient.SETEX(user._id.valueOf(), 365 * 24 * 60 * 60, token);
       resolve(token);
     });
   });
@@ -55,34 +55,32 @@ const VerifyRefreshToken = (token) => {
   });
 };
 
-const deleteFile = (fileAddress) =>{
-  console.log(fileAddress);
-  if(fileAddress){
-
-    const pathFile = path.join(__dirname,"..","..","public",fileAddress)
-    if(fs.existsSync(pathFile)) fs.unlinkSync(pathFile)
-
+const deleteFile = (fileAddress) => {
+  if (fileAddress) {
+    const pathFile = path.join(__dirname, "..", "..", "public", fileAddress);
+    if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile);
   }
-  
-}
+};
 
-const listOfimagesFromRequest= (files,fileUploadPath)=> {
-  if(files?.length > 0){
-      return (files.map(file => path.join(fileUploadPath,file.filename))).map(item => item.replace(/\\/g,"/"))
-  }else{
-    return []
+const listOfimagesFromRequest = (files, fileUploadPath) => {
+  if (files?.length > 0) {
+    return files
+      .map((file) => path.join(fileUploadPath, file.filename))
+      .map((item) => item.replace(/\\/g, "/"));
+  } else {
+    return [];
   }
-}
+};
 
-const copyObject = (obj)=>{
-  return JSON.parse(JSON.stringify(obj))
-}
+const copyObject = (obj) => {
+  return JSON.parse(JSON.stringify(obj));
+};
 
-const setFeatures = (body)=>{
-  const {colors, width, weight, height,length} = body
-  let features = {}
-  features.colors = colors
-  if(!isNaN(+weight)||!isNaN(+width)||!isNaN(+height)||!isNaN(+length)){
+const setFeatures = (body) => {
+  const { colors, width, weight, height, length } = body;
+  let features = {};
+  features.colors = colors;
+  if (!isNaN(+weight) || !isNaN(+width) || !isNaN(+height) || !isNaN(+length)) {
     if (!width) features.width = 0;
     else features.weight = width;
     if (!height) features.height = 0;
@@ -92,10 +90,10 @@ const setFeatures = (body)=>{
     if (!weight) features.weight = 0;
     else features.weight = weight;
   }
-  return features
-}
+  return features;
+};
 
-const deleteInvalidPropertyInObject =(data={},blackListFields=[])=>{
+const deleteInvalidPropertyInObject = (data = {}, blackListFields = []) => {
   let nullishData = ["", " ", null, undefined, NaN, 0, "0"];
   Object.keys(data).forEach((key) => {
     if (blackListFields.includes(key)) delete data[key];
@@ -105,8 +103,7 @@ const deleteInvalidPropertyInObject =(data={},blackListFields=[])=>{
     if (Array.isArray(data[key]) && data[key].length === 0) delete data[key];
     if (nullishData.includes(data[key])) delete data[key];
   });
-}
-
+};
 
 module.exports = {
   randomNumberGen,
@@ -117,5 +114,5 @@ module.exports = {
   listOfimagesFromRequest,
   copyObject,
   setFeatures,
-  deleteInvalidPropertyInObject
+  deleteInvalidPropertyInObject,
 };

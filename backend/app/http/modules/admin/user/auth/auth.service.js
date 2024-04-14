@@ -1,9 +1,12 @@
 const autoBind = require("auto-bind");
-const { userModel } = require("../../../../models/users");
-const { EXPIRES_IN, ROLES } = require("../../../../utils/constans");
+const { userModel } = require("../../../../../models/users");
+const { EXPIRES_IN, ROLES } = require("../../../../../utils/constans");
 const createError = require("http-errors");
-const { signAccessToken,VerifyRefreshToken, signRfreshToken  } = require("../../../../utils/function");
-
+const {
+  signAccessToken,
+  VerifyRefreshToken,
+  signRfreshToken,
+} = require("../../../../../utils/function");
 
 class AuthService {
   #model;
@@ -12,9 +15,8 @@ class AuthService {
     this.#model = userModel;
   }
   async saveUser(mobile, code) {
-   
     const user = await this.checkExistUser(mobile);
-   
+
     const now = new Date().getTime();
     let otp = {
       code,
@@ -42,22 +44,22 @@ class AuthService {
     const now = Date.now();
     if (user.otp.expiresIn < now)
       throw createError.Unauthorized("کد وارد شده منقضی شده است");
-    const accessToken = await signAccessToken(user._id)
-    const newRefreshToken = await signRfreshToken(user._id)
+    const accessToken = await signAccessToken(user._id);
+    const newRefreshToken = await signRfreshToken(user._id);
     return {
       accessToken,
-      newRefreshToken
+      newRefreshToken,
     };
   }
-  async sendRefreshToken(refreshToken){
-    const mobile = await VerifyRefreshToken(refreshToken)
-    const user = await this.checkExistUser(mobile)
-    const accessToken = await signAccessToken(user._id)
-    const newRefreshToken = await signRfreshToken(user._id)
+  async sendRefreshToken(refreshToken) {
+    const mobile = await VerifyRefreshToken(refreshToken);
+    const user = await this.checkExistUser(mobile);
+    const accessToken = await signAccessToken(user._id);
+    const newRefreshToken = await signRfreshToken(user._id);
     return {
       accessToken,
-      newRefreshToken
-    }
+      newRefreshToken,
+    };
   }
   async checkExistUser(mobile) {
     const user = await this.#model.findOne({ mobile });

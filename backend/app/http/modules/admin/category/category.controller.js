@@ -1,9 +1,10 @@
 const autoBind = require("auto-bind");
-const Controller = require("../controller");
+const Controller = require("../../controller");
 const categoryService = require("./category.service");
-const { categorySchema } = require("../../validators/category/category.shema");
-const {StatusCodes} = require("http-status-codes")
-
+const {
+  categorySchema,
+} = require("../../../validators/category/category.shema");
+const { StatusCodes } = require("http-status-codes");
 
 module.exports = new (class CategoryController extends Controller {
   #service;
@@ -19,8 +20,8 @@ module.exports = new (class CategoryController extends Controller {
       const { title, parent } = req.body;
       const category = await this.#service.createCategory(title, parent);
       return res.status(StatusCodes.CREATED).json({
+        statusCode: StatusCodes.CREATED,
         data: {
-          statusCode: StatusCodes.CREATED,
           message: "دسته بندی با موفقیت ایجاد گردید",
           category,
         },
@@ -35,8 +36,8 @@ module.exports = new (class CategoryController extends Controller {
       const { title } = req.body;
       const result = await this.#service.editCategory(id, title);
       res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: result,
         },
       });
@@ -49,8 +50,8 @@ module.exports = new (class CategoryController extends Controller {
       const { id } = req.params;
       const result = await this.#service.removeCategory(id);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: result,
         },
       });
@@ -62,8 +63,8 @@ module.exports = new (class CategoryController extends Controller {
     try {
       const result = await this.#service.getAllCategories();
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           categories: result,
         },
       });
@@ -81,8 +82,8 @@ module.exports = new (class CategoryController extends Controller {
     try {
       const result = await this.#service.getAllParents();
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           parents: result,
         },
       });
@@ -95,8 +96,8 @@ module.exports = new (class CategoryController extends Controller {
       const { parentId } = req.params;
       const result = await this.#service.getChildOfParents(parentId);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           childrens: result,
         },
       });

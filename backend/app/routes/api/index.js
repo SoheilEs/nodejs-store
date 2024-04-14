@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const homePageController = require("../../http/controllers/api/homePage.controller");
+const homePageController = require("../../http/modules/api/homePage.controller");
 const {
   VerifyAccessToken,
 } = require("../../http/middlewares/verifyAccessToken");

@@ -1,5 +1,5 @@
 const autoBind = require("auto-bind");
-const { categoryModel } = require("../../../models/categories");
+const { categoryModel } = require("../../../../models/categories");
 const createError = require("http-errors");
 const { isValidObjectId } = require("mongoose");
 
@@ -19,8 +19,8 @@ module.exports = new (class CategoryService {
   async getAllParents() {
     const parents = await this.#categoryModel.aggregate([
       {
-        $match:{parent:undefined}
-      }
+        $match: { parent: undefined },
+      },
     ]);
     if (!parents) throw createError.NotFound("دسته ای یافت نشد");
     return parents;
@@ -36,7 +36,7 @@ module.exports = new (class CategoryService {
     return childrens;
   }
   async getAllCategories() {
-    return await this.#categoryModel.find({ parent: undefined } );
+    return await this.#categoryModel.find({ parent: undefined });
   }
   async removeCategory(id) {
     const category = await this.checkExistCategory(id);
@@ -47,12 +47,16 @@ module.exports = new (class CategoryService {
       throw createError.InternalServerError("حذف دسته بندی انجام نشد");
     return "حذف دسته بندی با موفقیت انجام شد";
   }
-  async editCategory(id,title){
-    if(!isValidObjectId(id)) throw createError.NotFound("شناسه وارد شده معتبر نیست")
-    const editedCategory = await this.#categoryModel.updateOne({_id:id},{$set:{title}})
-    if(editedCategory.modifiedCount === 0) throw createError.InternalServerError("بروز رسانی دسته انجام نگرفت")
-    return "بروز رسانی با موفقیت انجام گرفت"
-
+  async editCategory(id, title) {
+    if (!isValidObjectId(id))
+      throw createError.NotFound("شناسه وارد شده معتبر نیست");
+    const editedCategory = await this.#categoryModel.updateOne(
+      { _id: id },
+      { $set: { title } }
+    );
+    if (editedCategory.modifiedCount === 0)
+      throw createError.InternalServerError("بروز رسانی دسته انجام نگرفت");
+    return "بروز رسانی با موفقیت انجام گرفت";
   }
   async checkExistCategory(id) {
     const category = await this.#categoryModel.findById(id);

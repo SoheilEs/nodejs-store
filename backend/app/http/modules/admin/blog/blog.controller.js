@@ -1,11 +1,10 @@
 const autoBind = require("auto-bind");
-const Controller = require("../controller");
+const Controller = require("../../controller");
 const blogService = require("./blog.service");
-const { createBlogSchema } = require("../../validators/blog/blog.schema");
+const { createBlogSchema } = require("../../../validators/blog/blog.schema");
 const path = require("path");
-const { deleteFile } = require("../../../utils/function");
-const {StatusCodes} = require("http-status-codes")
-
+const { deleteFile } = require("../../../../utils/function");
+const { StatusCodes } = require("http-status-codes");
 
 class BlogController extends Controller {
   #service;
@@ -23,7 +22,7 @@ class BlogController extends Controller {
         blogDataBody.filename
       );
       const { title, text, short_text, category, tags } = blogDataBody;
-      const image = req.body.image.replace(/\\/g,"/")
+      const image = req.body.image.replace(/\\/g, "/");
       await this.#service.createBlog({
         author,
         title,
@@ -34,13 +33,13 @@ class BlogController extends Controller {
         tags,
       });
       return res.status(StatusCodes.CREATED).json({
+        statusCode: StatusCodes.CREATED,
         data: {
-          statusCode: StatusCodes.CREATED,
           message: "ایجاد بلاگ با موفقیت انجام گرفت",
         },
       });
     } catch (error) {
-      deleteFile(req?.body?.image);
+      deleteFile(path.join(req.body.fileUploadPath, req.body.filename));
       next(error);
     }
   }
@@ -49,8 +48,8 @@ class BlogController extends Controller {
       const { id } = req.params;
       const result = await this.#service.getSingleBlog(id);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           result,
         },
       });
@@ -62,8 +61,8 @@ class BlogController extends Controller {
     try {
       const blogs = await this.#service.getAllBlogs();
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           blogs,
         },
       });
@@ -82,8 +81,8 @@ class BlogController extends Controller {
       const { id } = req.params;
       const result = await this.#service.deleteBlogById(id);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: result,
         },
       });
@@ -95,17 +94,16 @@ class BlogController extends Controller {
     try {
       const { id } = req.params;
       const { _id: author } = req.user;
-      
 
       if (req?.body?.fileUploadPath && req?.body?.filename) {
         req.body.image = path.join(req.body.fileUploadPath, req.body.filename);
       }
 
       const data = req.body;
-      const result = await this.#service.updateBlog(author,id, data);
+      const result = await this.#service.updateBlog(author, id, data);
       return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: result,
         },
       });

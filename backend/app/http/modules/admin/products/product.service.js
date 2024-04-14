@@ -1,25 +1,26 @@
 const autoBind = require("auto-bind");
-const { productModel } = require("../../../models/products");
+const { productModel } = require("../../../../models/products");
 const createError = require("http-errors");
 const { isValidObjectId } = require("mongoose");
-const { categoryModel } = require("../../../models/categories");
-const { deleteFile, deleteInvalidPropertyInObject } = require("../../../utils/function");
-
-
+const { categoryModel } = require("../../../../models/categories");
+const {
+  deleteFile,
+  deleteInvalidPropertyInObject,
+} = require("../../../../utils/function");
 
 const ProductBlackList = {
-  BOOKMARKS:"bookmarks",
-  DISLIKES:"dislikes",
-  COMMENTS:"commments",
-  LIKES:"likes",
-  SUPPLIER:"supplier",
-  WIDTH:"width",
-  LENGTH:"length",
-  HEIGHT:"height",
-  WEIGHT:"weight",
-  COLORS:"colors",
-}
-Object.freeze(ProductBlackList)
+  BOOKMARKS: "bookmarks",
+  DISLIKES: "dislikes",
+  COMMENTS: "commments",
+  LIKES: "likes",
+  SUPPLIER: "supplier",
+  WIDTH: "width",
+  LENGTH: "length",
+  HEIGHT: "height",
+  WEIGHT: "weight",
+  COLORS: "colors",
+};
+Object.freeze(ProductBlackList);
 
 class ProductService {
   #productModel;
@@ -81,9 +82,8 @@ class ProductService {
     return "محصول مورد نظر حذف گردید";
   }
   async updateProduct(supplier, id, data) {
-   
-    let blackListFields = Object.values(ProductBlackList)
-    deleteInvalidPropertyInObject(data,blackListFields)
+    let blackListFields = Object.values(ProductBlackList);
+    deleteInvalidPropertyInObject(data, blackListFields);
     if (!isValidObjectId(id))
       throw createError.NotFound("شناسه محصول نامعتبر است");
     const product = await this.checkExistsProduct(id);

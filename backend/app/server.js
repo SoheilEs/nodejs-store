@@ -49,7 +49,7 @@ module.exports = class Application{
                 }, 
                 security : [{BearerAuth : []}]
             },
-            apis : ["./app/routes/**/*.js"]
+            apis : [process.cwd() + "/app/http/**/*.swagger.js"]
         }),
         {explorer:true},
         ))
