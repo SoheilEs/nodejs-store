@@ -97,6 +97,62 @@ class CourseController extends Controller {
       next(error);
     }
   }
+  async addChapter(req,res,next){
+    try{
+      const {id, title, text} = req.body  
+      const result = await this.#courseServices.addChapter({id, title, text})
+      return res.status(StatusCodes.CREATED).json({
+        statusCode: StatusCodes.CREATED,
+        data:{
+          message: result
+        }
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+  async ListCourseChapters(req,res,next){
+    try{
+      const id = req.params.id  
+      const chapters = await this.#courseServices.chaptersOfCourse(id)
+      return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data:{
+         course:chapters
+        }
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+  async deleteChapterById(req,res,next){
+    try{
+      const chapterId = req.params.chapterId
+      const result = await this.#courseServices.deleteChapterById(chapterId)
+      return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data:{
+          message: result
+        }
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+  async updataChapterById(req,res,next){
+    try{
+      const chapterId = req.params.chapterId
+      const result = await this.#courseServices.updateCourseChapter(chapterId,req.body)
+      return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data:{
+          message:result
+        }
+      })
+    }catch(error){
+      next(error)
+    }
+  }
 }
 
 module.exports = new CourseController();

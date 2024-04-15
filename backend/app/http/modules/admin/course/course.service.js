@@ -2,7 +2,10 @@ const autoBind = require("auto-bind");
 const { courseModel } = require("../../../../models/course");
 const createError = require("http-errors");
 const { isValidObjectId } = require("mongoose");
-const { deleteFile } = require("../../../../utils/function");
+const {
+  deleteFile,
+  deleteInvalidPropertyInObject,
+} = require("../../../../utils/function");
 
 class CourseService {
   #courseModel;
@@ -20,10 +23,20 @@ class CourseService {
           },
         },
         { _v: 0 }
-      );
+      ).populate([
+      { path: "category", select:["title"] },
+      {
+        path: "teacher",
+        select: ["mobile", "username", "last_name", "first_name","email "],
+      },]);
       return course;
     }
-    const course = await this.#courseModel.find({}, { _v: 0 });
+    const course = await this.#courseModel.find({}, { _v: 0 }).populate([
+      { path: "category", select:["title"] },
+      {
+        path: "teacher",
+        select: ["mobile", "username", "last_name", "first_name","email "],
+      },])
     if (course.length === 0) throw createError.NotFound("محصولی یافت نشد");
     return course;
   }
@@ -37,6 +50,31 @@ class CourseService {
       );
     return createdCourse;
   }
+  async addChapter(data) {
+    const { id, title, text } = data;
+    await this.getCourseById(id);
+    const saveChapterRes = await this.#courseModel.updateOne(
+      { _id: id },
+      {
+        $push: {
+          chapters: { title, text, episodes: [] },
+        },
+      }
+    );
+    if (saveChapterRes.modifiedCount === 0)
+      throw createError.InternalServerError("فصل اضافه نشد");
+    return "فصل با موفقیت اضافه گردید";
+  }
+  async chaptersOfCourse(id) {
+    if (!isValidObjectId(id))
+      throw createError.BadRequest("شناسه معتبر نمی باشد");
+    const chapters = await this.#courseModel.findOne(
+      { _id: id },
+      { chapters: 1, title: 1 }
+    );
+    if (!chapters) throw createError.NotFound("فصلی یافت نشد");
+    return chapters;
+  }
   async getCourseById(id) {
     if (!isValidObjectId(id))
       throw createError.BadRequest("شناسه وارد شده معتبر نمی باشد");
@@ -44,6 +82,23 @@ class CourseService {
 
     if (!course) throw createError.NotFound("دوره ای یافت نشد");
     return course;
+  }
+  async updateCourseChapter(chapterId, data) {
+    deleteInvalidPropertyInObject(data, ["_id"]);
+    const { title, text } = data;
+
+    await this.checkExistChapter(chapterId);
+    const updatedChapterRes = await this.#courseModel.updateOne(
+      { "chapters._id": chapterId },
+      {
+        $set: {
+          "chapters.$": data,
+        },
+      }
+    );
+    if (updatedChapterRes.modifiedCount === 0)
+      throw createError.InternalServerError("بروز رسانی فصل انجام نگرفت");
+    return "بروزرسانی با موفقیت انجام شد";
   }
   async deleteCourseById(id) {
     if (!isValidObjectId(id))
@@ -59,6 +114,35 @@ class CourseService {
         "حذف انجام نگرفت،خطای سرور رخ داده است"
       );
     return "حذف با موفقیت انجام شد";
+  }
+  async deleteChapterById(chapterId) {
+    await this.checkExistChapter(chapterId);
+    const deletedChapter = await this.#courseModel.updateOne(
+      { "chapters._id": chapterId },
+      {
+        $pull: {
+          chapters: {
+            _id: chapterId,
+          },
+        },
+      }
+    );
+
+    if (deletedChapter.modifiedCount === 0)
+      throw createError.InternalServerError("حذف دوره صورت نگرقت");
+    return "فصل با موفقیت حذف گردید";
+  }
+  async checkExistChapter(chapterId) {
+
+    if (!isValidObjectId(chapterId))
+      throw createError.BadRequest("شناسه فصل معتبر نمی باشد");
+    const chapter = await this.#courseModel.findOne(
+      { "chapters._id": chapterId },
+      { "chapters.$": 1 }
+    );
+    
+    if (!chapter) throw createError.NotFound("فصلی برای این دوره ثبت نشده است");
+    return chapter;
   }
 }
 

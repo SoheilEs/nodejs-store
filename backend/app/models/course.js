@@ -3,14 +3,14 @@ const { commentSchema } = require("./public.schema");
 
 const episodeSchema = new Schema({
     title:{type:String,required:true},
-    description:{type: String, required:true},
+    text:{type: String, required:true},
     type:{type:String, default:"free"},
     time:{type: String, required: true}
 })
 
 const chapterSchema = new Schema({
     title:{type: String,required:true},
-    description:{type: String,default:""},
+    text:{type: String,default:""},
     episodes:{type:[episodeSchema],default:[]}
 })
 

@@ -9,6 +9,8 @@
  * @swagger
  *  components:
  *      schemas:
+ *          
+ *              
  *          AddCourse:
  *              type: object
  *              required:
@@ -41,6 +43,28 @@
  *                      type: array
  *                      items:
  *                          type: string
+ *          AddChapter:
+ *              type: object
+ *              required:
+ *                  -   id
+ *                  -   title
+ *              properties:
+ *                  id:
+ *                     type: string
+ *                  title:
+ *                      type: string
+ *                  text:
+ *                      type: string
+ * 
+ *          UpdateChapter:
+ *              type: object
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                  text:
+ *                      type: string
+ *                          
+ *                      
  *
  *
  */
@@ -48,43 +72,105 @@
 /**
  * @swagger
  *  definitions:
- *      ListoFCourses:
- *              type: array
- *              items:
+ *      ChaptersOfCourse:
+ *          type: object
+ *          properties:
+ *              statusCode:
+ *                  type: integer
+ *                  example: 200
+ *              data: 
  *                  type: object
  *                  properties:
- *                      _id:
+ *                      course:
+ *                          type: object
+ *                          properties:
+ *                              _id:
+ *                                  type: string
+ *                                  example: "sjd242343213ewf"
+ *                              title:
+ *                                  type: string
+ *                                  example: title of a course
+ *                              chapters:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                              _id: 
+ *                                                  type: string
+ *                                              title: 
+ *                                                  type: string
+ *                                              text:
+ *                                                  type: string
+ *                                              episodes:
+ *                                                  type: array
+ *                                                  example: []
+ *                              
+ *                              
+ *      ListoFCourses:
+ *          type: object
+ *          properties:
+ *              statusCode: 
+ *                   type: integer
+ *                   example: 200
+ *              data:
+ *                   type: object
+ *                   properties:
+ *                      courses:
+ *                             type: array
+ *                             items: 
+ *                                  type: object
+ *                                  properties:
+ *                                        _id:
+ *                                           type: string
+ *                                           example: adsdf23423423324
+ *                                        title:
+ *                                              type: string
+ *                                              example: title for course
+ *                                        short_text:
+ *                                              type: string
+ *                                              example: title for course
+ *                                        text:
+ *                                             type: string
+ *                                             example: title for course
+ *                                        status:
+ *                                              type: string
+ *                                              example: [free, cash, vip]
+ *                                        time:
+ *                                              type: string
+ *                                              example: "01:30:33"
+ *                                        teacher:
+ *                                              type: string
+ *                                              example: Soheil
+ *                                        price:
+ *                                              type: number
+ *                                              example: 250000
+ *                                        discount:
+ *                                              type: number
+ *                                              example: 20
+ * 
+ *                                        studentCount:
+ *                                              type: integer
+ *                                              example: 200
+ *                                              
+ *                                      
+ *                                         
+ *              
+ *
+ *  
+ *      publicDefinition:
+ *          type: object
+ *          properties:
+ *              statusCode:
+ *                  type: integer
+ *                  example: 20X
+ *              data:
+ *                  type: object
+ *                  properties:
+ *                      message:
  *                          type: string
- *                          example: 661b9757140aa9ae495bc1f6
- *                      title:
- *                          type: string
- *                          example: title of the course
- *                      short_text:
- *                          type: string
- *                          example: short text about course
- *                      text:
- *                          type: string
- *                          example: berief text about course
- *                      status:
- *                          type: string
- *                          example: [free, cash, vip]
- *                      time:
- *                          type: string
- *                          example: "01:22:34"
- *                      price:
- *                          type: number
- *                          example: 250000
- *                      discount:
- *                          type: number
- *                          example: 20
- *                      teacher:
- *                          type: string
- *                          example: soheil Isazade
- *                      studentCount:
- *                          type: integer
- *                      
- *                      
+ *                          example: "the best message for that action"
  */
+
 
 /**
  * @swagger
@@ -101,6 +187,10 @@
  *          responses:
  *              201:
  *                  description: Created
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/publicDefinition"
  *              400:
  *                  description: BadRequest
  *              401:
@@ -155,6 +245,10 @@
  *          responses:
  *                200:
  *                  description: Success
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/publicDefinition"
  *                404:
  *                  description: NotFound
  *                401:
@@ -179,6 +273,10 @@
  *          responses:
  *                200:
  *                  description: Success
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/publicDefinition"
  *                404:
  *                  description: NotFound
  *                401:
@@ -188,5 +286,116 @@
  *
  */
 
+/**
+ * @swagger
+ *  /courses/chapters :
+ *      put:
+ *          tags: [Courses]
+ *          description: Add Chapter for a Course
+ *          summary: Add chapter
+ *          requestBody:
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/AddChapter"
+ *                  application/json:
+ *                          schema:
+ *                              $ref: "#/components/schemas/AddChapter"
+ *          responses:
+ *              201:
+ *                  description: Created
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/publicDefinition"
+ *              404:
+ *                  description: NotFound
+ *              500:
+ *                  description: Internal Server Error
+ */
 
 
+/**
+ * @swagger
+ *  /courses/chapters/{id}:
+ *      get:
+ *          tags: [Courses]
+ *          summary: get Chapters 
+ *          description: Get chapters of a Course by id
+ *          parameters:
+ *              -   in: path
+ *                  required: true
+ *                  type: string
+ *                  name: id
+ *          responses:
+ *              200:
+ *                  description: Success
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/ChaptersOfCourse"
+ *              404: 
+ *                  description: NotFound
+ *              500:
+ *                  description: Internal Server Error
+ */
+
+
+
+/**
+ * @swagger
+ *  /courses/chapters/{chapterId}:
+ *      delete:
+ *          tags: [Courses]
+ *          summary: delete Chapter
+ *          description: delete chapter of a Course by chapterId
+ *          parameters:
+ *              -   in: path
+ *                  required: true
+ *                  type: string
+ *                  name: chapterId
+ *          responses:
+ *              200:
+ *                  description: Success
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/publicDefinition"
+ *              404: 
+ *                  description: NotFound
+ *              500:
+ *                  description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ *  /courses/chapters/{chapterId}:
+ *      patch:
+ *          tags: [Courses]
+ *          summary: Update Chapter
+ *          description: Update chapter of a Course by chapterId
+ *          parameters:
+ *              -   in: path
+ *                  required: true
+ *                  type: string
+ *                  name: chapterId
+ *          requestBody:
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/schemas/UpdateChapter"
+ *                  application/json:
+ *                      schema:
+ *                          $ref: "#/components/schemas/UpdateChapter"
+ *          responses:
+ *              200:
+ *                  description: Success
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/publicDefinition"
+ *              404: 
+ *                  description: NotFound
+ *              500:
+ *                  description: Internal Server Error
+ */
