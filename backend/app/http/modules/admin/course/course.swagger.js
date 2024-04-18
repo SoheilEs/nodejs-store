@@ -10,7 +10,30 @@
  *  components:
  *      schemas:
  *          
- *            
+ *          updateCourse:
+ *              type: object
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                  short_text:
+ *                      type: string
+ *                  text:
+ *                      type: string
+ *                  image:
+ *                      type: file
+ *                  category:
+ *                      type: string
+ *                  type:
+ *                      type: string
+ *                      enum: [free, cash, vip]
+ *                  price:
+ *                      type: number
+ *                  discount:
+ *                      type: number
+ *                  tags:
+ *                      type: array
+ *                      items:
+ *                          type: string
  *          AddCourse:
  *              type: object
  *              required:
@@ -316,6 +339,38 @@
  *                  name: id
  *                  type: string
  *                  description: id for specified course
+ *          responses:
+ *                200:
+ *                  description: Success
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: "#/definitions/publicDefinition"
+ *                404:
+ *                  description: NotFound
+ *                401:
+ *                  description: Unauthorized
+ *                500:
+ *                  description: Internal Server Error
+ *
+ */
+/**
+ * @swagger
+ *  /courses/{id}:
+ *      patch:
+ *          tags: [Courses]
+ *          summary: Edit Course
+ *          description: Edit Course By Id
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *                  description: id for specified course
+ *          requestBody:
+ *              content:
+ *                  multipart/form-data:
+ *                      schema:
+ *                          $ref: "#/components/schemas/updateCourse"
  *          responses:
  *                200:
  *                  description: Success

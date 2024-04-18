@@ -1,6 +1,7 @@
 const { Schema, models, model, Types } = require("mongoose");
 const { commentSchema } = require("./public.schema");
-const dotenv = require("dotenv")
+const dotenv = require("dotenv");
+const { getTimeOfCourse } = require("../utils/function");
 dotenv.config()
 
 const episodeSchema = new Schema({
@@ -40,7 +41,7 @@ const courseSchema = new Schema({
   price:{type:Number,default:0},
   discount:{type:Number,default:0},
   type:{type: String, default:"free" ,required: true }, // پولی یا رایگان
-  time:{type: String, default:"00:00:00"},
+ 
   status:{type:String,default:"soon"}, // soon,holding,compeleted
   teacher:{type: String, ref:"User" ,required: true },
   chapters: {type:[chapterSchema],default:[]},
@@ -52,6 +53,10 @@ const courseSchema = new Schema({
 
 courseSchema.virtual("imageURL").get(function(){
   return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.image}`
+})
+
+courseSchema.virtual("totalTime").get(function(){
+  return getTimeOfCourse(this.chapters)
 })
 
 courseSchema.index({title:"text",short_text:"text",text:"text"})

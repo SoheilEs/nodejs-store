@@ -2,7 +2,7 @@ const autoBind = require("auto-bind");
 const Controller = require("../../controller");
 const courseService = require("./course.service");
 const { StatusCodes } = require("http-status-codes");
-const { deleteFile, getTime, deleteInvalidPropertyInObject } = require("../../../../utils/function");
+const { deleteFile, getTime, deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const {
   addCourseSchema,
   episodeAddSchema,
@@ -100,6 +100,21 @@ class CourseController extends Controller {
   }
   async updateCourse(req, res, next) {
     try {
+      const {id} = req.params
+      const data = copyObject(req.body)
+      const {fileUploadPath,filename} = req.body
+      let blackListFields = ["time","chapters","episodes","students","likes","dislikes","comments","_id","bookmarks","filename","fileuploadPath"]
+      deleteInvalidPropertyInObject(data,blackListFields)
+      if(req.file){
+        data.image = path.join(fileUploadPath,filename)
+      }
+      const result = await this.#courseServices.updateCourse(id,data)
+      return res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data:{
+          message: result
+        }
+      })
     } catch (error) {
       next(error);
     }

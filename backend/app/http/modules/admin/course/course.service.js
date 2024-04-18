@@ -6,6 +6,7 @@ const {
   deleteFile,
   deleteInvalidPropertyInObject,
   copyObject,
+  getTimeOfCourse,
 } = require("../../../../utils/function");
 
 class CourseService {
@@ -80,13 +81,23 @@ class CourseService {
     if (!chapters) throw createError.NotFound("فصلی یافت نشد");
     return chapters;
   }
-
+  async updateCourse(id,data){
+    
+    if(!isValidObjectId(id)) throw createError.BadRequest("شناسه دوره نامعتبر است")
+    const course = await this.checkExistCourse(id)
+    deleteFile(course.image)
+    const updateCourse = await this.#courseModel.updateOne({_id: course._id},{
+      $set: data
+    })
+    if(!updateCourse.modifiedCount) throw createError.InternalServerError("بروز رسانی دوره انجام نگرفت")
+    return "بروز رسانی دوره با موفقیت انجام گرفت"
+  }
 
   async getCourseById(id) {
     if (!isValidObjectId(id))
       throw createError.BadRequest("شناسه وارد شده معتبر نمی باشد");
     const course = await this.#courseModel.findById(id);
-
+    course.time = getTimeOfCourse(course.chapters)
     if (!course) throw createError.NotFound("دوره ای یافت نشد");
     return course;
   }
@@ -232,6 +243,11 @@ class CourseService {
     
     const episode = await course?.chapters[0]?.episodes[0]
     return copyObject(episode)
+  }
+  async checkExistCourse(id){
+    const course = await this.#courseModel.findById({_id:id})
+    if(!course) throw createError.NotFound("دوره ای یافت نشد")
+    return course
   }
  
 }

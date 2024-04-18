@@ -5,6 +5,7 @@ const { ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_KEY } = require("./constans");
 const redisClient = require("./init_redis");
 const fs = require("fs");
 const path = require("path");
+const { match } = require("assert");
 const randomNumberGen = () => {
   return Math.floor(Math.random() * 90000 + 10000);
 };
@@ -137,7 +138,35 @@ seconds = String(seconds).padStart(2, "0");
 
   return hours + ":" + minutes + ":" + seconds;
 }
-getTime(100000.555656)
+function getTimeOfCourse(chapters=[]){
+  let time , hours, minutes, seconds = 0;
+  
+  for(const chapter of chapters){
+    
+    for (const episode of chapter.episodes) {
+      if(episode?.time) time = episode.time.split(":")
+      else time = "00:00:00".split(":")
+      if(time.length === 3){
+        seconds += +time[0] * 3600
+        seconds += +time[1] * 60
+        seconds += +time[2] 
+      }else if(time.length === 2){
+        seconds += +time[0] * 60
+        seconds += +time[1]
+
+      }
+    }
+  }
+  hours = Math.floor(seconds / 3600);
+  seconds %= 3600;
+  minutes = Math.floor(seconds / 60);
+  seconds = Math.floor(seconds) % 60;
+  minutes = String(minutes).padStart(2, "0");
+  hours = String(hours).padStart(2, "0");
+  seconds = String(seconds).padStart(2, "0");
+
+  return hours + ":" + minutes + ":" + seconds;
+}
 module.exports = {
   randomNumberGen,
   signAccessToken,
@@ -149,4 +178,5 @@ module.exports = {
   setFeatures,
   deleteInvalidPropertyInObject,
   getTime,
+  getTimeOfCourse
 };
