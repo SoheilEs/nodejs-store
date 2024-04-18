@@ -1,11 +1,21 @@
 const { Schema, models, model, Types } = require("mongoose");
 const { commentSchema } = require("./public.schema");
+const dotenv = require("dotenv")
+dotenv.config()
 
 const episodeSchema = new Schema({
     title:{type:String,required:true},
     text:{type: String, required:true},
-    type:{type:String, default:"free"},
-    time:{type: String, required: true}
+    type:{type:String, default:"unlock"}, // lock | unlock
+    time:{type: String, required: true},
+    videoAddress:{type: String, required:true}
+},{id:false,toJSON:{
+  virtuals:true
+}})
+
+episodeSchema.virtual("vidoeURL").get(function(){
+  
+  return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.videoAddress}`
 })
 
 const chapterSchema = new Schema({
@@ -13,6 +23,8 @@ const chapterSchema = new Schema({
     text:{type: String,default:""},
     episodes:{type:[episodeSchema],default:[]}
 })
+
+
 
 const courseSchema = new Schema({
   title: { type: String, required: true },
@@ -35,10 +47,14 @@ const courseSchema = new Schema({
   students:{type:[Types.ObjectId],ref:"User",default:[]}
   
 
-});
+},{versionKey:false,id:false,toJSON:{virtuals:true}});
+
+
+courseSchema.virtual("imageURL").get(function(){
+  return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.image}`
+})
 
 courseSchema.index({title:"text",short_text:"text",text:"text"})
-
 const courseModel = models.Course || model("Course", courseSchema);
 
 module.exports = {

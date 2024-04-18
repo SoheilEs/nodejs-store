@@ -28,10 +28,14 @@ const productSchema = new Schema({
     madeIn:""
   }}
 
-},{versionKey:false});
+},{versionKey:false,id:false,toJSON:{virtuals:true}});
 
 productSchema.index({title:"text",short_text:"text",text:"text"})
 
+
+productSchema.virtual("imagesURL").get(function(){
+  return this.images.map(image => `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${image}`)
+})
 const productModel = models.Product || model("Product", productSchema);
 
 module.exports = {

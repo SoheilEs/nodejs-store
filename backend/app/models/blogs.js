@@ -1,7 +1,7 @@
 const { Schema, models, model, Types } = require("mongoose");
 const { commentSchema } = require("./public.schema");
-
-
+const dotenv = require("dotenv")
+dotenv.config()
 
 const blogSchema = new Schema(
   {
@@ -22,12 +22,19 @@ const blogSchema = new Schema(
     bookmarks: { type: [Types.ObjectId], ref: "User", default: [] },
   },
   {
-    timestamps: true,
-    versionKey: false,
-    id: false,
+    timestamps:true,
+    versionKey:false,
+    id:false,
+    toJSON:{
+      virtuals:true
+    }
   }
 );
 
+blogSchema.virtual("imageURL").get(function(){
+  
+  return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.image}`
+})
 const blogModel = models.Blog || model("Blog", blogSchema);
 
 module.exports = {

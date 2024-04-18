@@ -16,6 +16,18 @@ const addCourseSchema = Joi.object({
    
 })
 
+const episodeAddSchema = Joi.object({
+    title: Joi.string().min(3).max(30).required().error(createError.BadRequest("عنوان قسمت صحیح نمی باشد")),
+    text: Joi.string().required().error(createError.BadRequest("توضیحات ارسال شده صحیح نمی باشد")),
+    type: Joi.string().regex(/(lock|unlock)/i).required().error(createError.BadRequest("نوع قسمت باید مشخص باشد")),
+    chapterID: Joi.string().regex(/^[0-9a-fA-F]{24}$/).error(createError.BadRequest("شناسه فصل نامعتبر است")),
+    courseID:Joi.string().regex(/^[0-9a-fA-F]{24}$/).error(createError.BadRequest("شناسه دوره نامعتبر است")),
+    fileUploadPath: Joi.allow(),
+    filename: Joi.string().pattern(/(\.mpg|\.mp4|\.mkv|\.avi|\.mov)$/).error(createError.BadRequest("تصویر ارسال شده صحیح نمی باشد")),
+})  
+
+
 module.exports = {
     addCourseSchema,
+    episodeAddSchema
 }

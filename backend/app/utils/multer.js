@@ -38,6 +38,13 @@ const fileFilter = (req,file,callBack)=>{
     if(mimetype.includes(ext)) return callBack(null,true)
     return callBack(createHttpError.BadRequest("فرمت فایل صحیح نمی باشد"))
 }
+
+const videoFilter = (req,file,callBack)=>{
+    const ext = path.extname(file.originalname)
+    const mimetype = [".mp4",".mpg",".mov",".avi",".mkv"]
+    if(mimetype.includes(ext)) return callBack(null,true)
+    return callBack(createHttpError.BadRequest("فرمت ویدیو صحیح نمی باشد"))
+}
 const uploadFile = multer({
     storage, 
     fileFilter,
@@ -45,7 +52,15 @@ const uploadFile = multer({
         fileSize: 1 * 1000 * 1000 //1MB
     }
 })
+const videoUpload = multer({
+    storage, 
+    videoFilter,
+    limits:{
+        fileSize: 300 * 1000 * 1000 //3MG
+    }
+})
 
 module.exports = {
-    uploadFile
+    uploadFile,
+    videoUpload
 }

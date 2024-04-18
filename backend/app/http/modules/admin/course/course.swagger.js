@@ -10,7 +10,7 @@
  *  components:
  *      schemas:
  *          
- *              
+ *            
  *          AddCourse:
  *              type: object
  *              required:
@@ -63,6 +63,51 @@
  *                      type: string
  *                  text:
  *                      type: string
+ *          UpdateEpisode:
+ *              type: object
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                  text:
+ *                      type: string
+ *                  video:
+ *                      type: file
+ *                      description: file of episode 
+ *                  type:
+ *                     type: string
+ *                     enum: [unlock,lock]
+ *                     description: Default is Unlock
+ *                      
+ *                  
+ *          AddEpisode:
+ *              type: object
+ *              required:
+ *                  -   courseID
+ *                  -   chapterID
+ *                  -   title
+ *                  -   text
+ *                  -   video
+ *                  -   type
+ *              properties:
+ *                  courseID:
+ *                     type: string
+ *                  chapterID:
+ *                      type: string
+ *                  title:
+ *                      type: string
+ *                  text:
+ *                      type: string
+ *                  type:
+ *                     type: string
+ *                     enum: [unlock,lock]
+ *                     description: Default is Unlock
+ * 
+ *                  video:
+ *                      type: file
+ *                      description: file of episode 
+ *                      
+ *                      
+ * 
  *                          
  *                      
  *
@@ -72,6 +117,7 @@
 /**
  * @swagger
  *  definitions:
+ *      
  *      ChaptersOfCourse:
  *          type: object
  *          properties:
@@ -399,3 +445,81 @@
  *              500:
  *                  description: Internal Server Error
  */
+
+/**
+ * @swagger
+ *  /courses/episodes/add:
+ *      post:
+ *          tags: [Courses]
+ *          summmary: Add Episode
+ *          description: Add Episode to a chapter
+ *          requestBody:
+ *              content:
+ *                  multipart/form-data:
+ *                      schema:
+ *                          $ref: "#/components/schemas/AddEpisode"
+ *                  
+ *          responses:
+ *              201:
+ *                  description: Created
+ *              404:
+ *                  description: NotFound
+ *              500:
+ *                  description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ *  /courses/episodes/{episodeID}:
+ *      delete:
+ *          tags: [Courses]
+ *          summmary: Delete Episode
+ *          description: Delete Episode of a chapter
+ *          parameters:
+ *              -   in: path
+ *                  name: episodeID
+ *                  required: true
+ *                  example: 661ec74ee7aee1c008c0e784
+ *                  description: Id of a episode for removing
+ *                  
+ *          responses:
+ *              200:
+ *                  description: Success
+ *              404:
+ *                  description: NotFound
+ *              500:
+ *                  description: Internal Server Error
+ */
+
+/** 
+* @swagger
+*  /courses/episodes/{episodeID}:
+*      patch:
+*          tags: [Courses]
+*          summary: Update Episode
+*          description: Update Episode of a chapter by episodeId
+*          parameters:
+*              -   in: path
+*                  required: true
+*                  type: string
+*                  name: episodeID
+*          requestBody:
+*              content:
+*                  multipart/form-data:
+*                      schema:
+*                          $ref: "#/components/schemas/UpdateEpisode"
+*                  application/json:
+*                      schema:
+*                          $ref: "#/components/schemas/UpdateEpisode"
+*          responses:
+*              200:
+*                  description: Success
+*                  content:
+*                      application/json:
+*                          schema:
+*                              $ref: "#/definitions/publicDefinition"
+*              404: 
+*                  description: NotFound
+*              500:
+*                  description: Internal Server Error
+*/

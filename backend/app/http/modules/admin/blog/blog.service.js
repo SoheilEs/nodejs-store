@@ -28,43 +28,7 @@ class BlogService {
     return blog;
   }
   async getAllBlogs() {
-    return await this.#BlogModel.aggregate([
-      {
-        $match: {},
-      },
-      {
-        $lookup: {
-          from: "users",
-          foreignField: "_id",
-          localField: "author",
-          as: "author",
-        },
-      },
-      {
-        $lookup: {
-          from: "categories",
-          foreignField: "_id",
-          localField: "category",
-          as: "category",
-        },
-      },
-      {
-        $unwind: "$author",
-      },
-      {
-        $unwind: "$category",
-      },
-
-      {
-        $project: {
-          "author.role": 0,
-          "author.otp": 0,
-          "author.__v": 0,
-          "author.bills": 0,
-          "author.discount": 0,
-        },
-      },
-    ]);
+    return await this.#BlogModel.find({}).populate([{path:"category",select:["title"]},{path:"author",select:["mobile","first_name","last_name","email"]}])
   }
   async getSingleBlog(id) {
     if (!isValidObjectId(id))
