@@ -9,12 +9,16 @@ const stringToArray = (field)=>{
                 }else{
                     req.body[field] = [req.body[field]]
                 }
-            }else if((req.body[field].constructor).toString().toLowerCase().indexOf("array") >=0){
+            }
+            if(Array.isArray(req.body[field])){
                     req.body[field].map(item=>item.trim())
+                    req.body[field] = [... new Set(req.body[field])]
                 }
         }else{
             req.body[field] = []
         }
+       
+            
         next()
     }
 }

@@ -1,6 +1,6 @@
 const { Schema, models, model, Types } = require("mongoose");
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   first_name: { type: String},
   last_name: { type: String},
   username: { type: String, lowercase:true},
@@ -17,11 +17,22 @@ const userSchema = new Schema({
   bills: { type: [], default: [] },
   discount: { type: Number, default: 0 },
   birthday: { type: String },
-  role:{type:[String],default:["USER"]},
+  Role:{type:String,default:"USER"},
   courses:{type:[Types.ObjectId],ref:"Course",default:[]}
+},{
+  timestamps:true,
+  toJSON:{
+    virtuals: true
+  }
 });
 
-const userModel = models.User || model("User", userSchema);
+
+UserSchema.index({first_name:"text",last_name:"text",mobile:"text",email:"text",username:"text"})
+
+const userModel = models.User || model("User", UserSchema);
+
+
+
 
 module.exports = {
   userModel,

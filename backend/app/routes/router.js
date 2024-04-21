@@ -1,7 +1,10 @@
+const { checkPermission } = require("../http/middlewares/permission.guard");
 const {
   VerifyAccessToken,
-  checkRole,
 } = require("../http/middlewares/verifyAccessToken");
+const { PERMISSIONS } = require("../utils/constans");
+const { PermissionRoutes } = require("./RBAC/permission.routes");
+const { RoleRoutes } = require("./RBAC/role.routes");
 
 const { HomePageRoutes } = require("./api");
 const { BlogRoutes } = require("./blog/blog.routes");
@@ -10,16 +13,19 @@ const { CourseRoutes } = require("./course/course.routes");
 const { DeveloperRoutes } = require("./developer/dev.routes");
 const { ProductRoutes } = require("./product/product.routes");
 const { UserAuthRoutes } = require("./user/auth.routes");
+const { UserRoutes } = require("./user/user.routes");
 const router = require("express").Router();
 
 router.use("/", HomePageRoutes);
 router.use("/user", UserAuthRoutes);
 router.use("/dev", DeveloperRoutes);
-router.use("/category", VerifyAccessToken, checkRole("ADMIN"), CategoryRoutes);
-router.use("/blog", VerifyAccessToken, checkRole("ADMIN"), BlogRoutes);
-router.use("/product", VerifyAccessToken, ProductRoutes);
-router.use("/courses", VerifyAccessToken, CourseRoutes);
-
+router.use("/category",VerifyAccessToken,checkPermission([PERMISSIONS.CONTENT_MANAGER]),CategoryRoutes);
+router.use("/blog", VerifyAccessToken,checkPermission([PERMISSIONS.ADMIN,PERMISSIONS.CONTENT_MANAGER,PERMISSIONS.TEACHER]) ,BlogRoutes);
+router.use("/product", VerifyAccessToken,checkPermission([PERMISSIONS.SUPPLIER,PERMISSIONS.CONTENT_MANAGER]),ProductRoutes);
+router.use("/courses", VerifyAccessToken,checkPermission([PERMISSIONS.COURSE]) ,CourseRoutes);
+router.use("/users",VerifyAccessToken,UserRoutes)
+router.use("/roles",VerifyAccessToken,RoleRoutes)
+router.use("/permissions",VerifyAccessToken,PermissionRoutes)
 module.exports = {
   AllRoutes: router,
 };

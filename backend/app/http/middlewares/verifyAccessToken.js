@@ -34,19 +34,9 @@ const VerifyAccessToken = (req, res, next) => {
   }
 };
 
-const checkRole = (role) => {
-  return (req, res, next) => {
-    try {
-      const user = req.user;
-      if (user.role.includes(role)) return next();
-      throw createError.Forbidden("شما به این قسمت دسترسی ندارید");
-    } catch (err) {
-      next(err);
-    }
-  };
-};
+
 
 module.exports = {
   VerifyAccessToken,
-  checkRole,
+  
 };

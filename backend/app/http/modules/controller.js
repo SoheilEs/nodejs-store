@@ -4,7 +4,7 @@ module.exports = class Controller {
     constructor(){
         autoBind(this)
     }
-    testMethod(){
-        return "Test String"
+    testMethod(req,res,next){
+        return res.send("Test String")
     }
 }

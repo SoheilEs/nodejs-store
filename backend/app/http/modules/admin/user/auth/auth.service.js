@@ -26,7 +26,7 @@ class AuthService {
       return !!(await this.#model.create({
         mobile,
         otp,
-        role: [ROLES.USER],
+        Role: ROLES.USER,
       }));
     }
     if (user.otp.expiresIn > now)
