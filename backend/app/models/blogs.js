@@ -15,7 +15,7 @@ const blogSchema = new Schema(
     text: { type: String, required: true },
     image: { type: String, required: true },
     tags: { type: [String], default: [] },
-    category: { type: [Types.ObjectId], ref: "Category", required: true },
+    category:{type: Types.ObjectId,ref:"Category",required:true},
     commments: { type: [commentSchema], default: [] },
     likes: { type: [Types.ObjectId], ref: "User", default: [] },
     dislikes: { type: [Types.ObjectId], ref: "User", default: [] },

@@ -15,6 +15,9 @@ const { ProductRoutes } = require("./product/product.routes");
 const { UserAuthRoutes } = require("./user/auth.routes");
 const { UserRoutes } = require("./user/user.routes");
 const router = require("express").Router();
+const {graphqlHTTP} = require("express-graphql")
+
+const { graphqlConfig } = require("../utils/graphql.config");
 
 router.use("/", HomePageRoutes);
 router.use("/user", UserAuthRoutes);
@@ -26,6 +29,7 @@ router.use("/courses", VerifyAccessToken,checkPermission([PERMISSIONS.COURSE]) ,
 router.use("/users",VerifyAccessToken,UserRoutes)
 router.use("/roles",VerifyAccessToken,RoleRoutes)
 router.use("/permissions",VerifyAccessToken,PermissionRoutes)
+router.use("/graphql",graphqlHTTP(graphqlConfig))
 module.exports = {
   AllRoutes: router,
 };

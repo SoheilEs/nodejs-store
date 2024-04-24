@@ -48,10 +48,10 @@ class ProductService {
           },
         },
         { _v: 0 }
-      );
+      ).populate([{path:"category"},{path:"supplier"}])
       return products;
     }
-    const products = await this.#productModel.find({}, { _v: 0 });
+    const products = await this.#productModel.find({}, { _v: 0 }).populate([{path:"category"},{path:"supplier",select:["first_name","last_name","mobile","email"]}])
     if (products.length === 0) throw createError.NotFound("محصولی یافت نشد");
     return products;
   }

@@ -17,7 +17,7 @@ const productSchema = new Schema({
   count:{type:Number},
   type:{type: String, required: true }, // virtual( online tutorilas: Node course, Python course) - physical(sells: book, bag ....)
   format:{type: String},
-  supplier:{type: String,ref:"User" ,required: true },
+  supplier:{type: Types.ObjectId,ref:"User" ,required: true },
   features:{type:Object,default:{
     length:"",
     height: "",
