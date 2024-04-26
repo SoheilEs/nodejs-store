@@ -10,7 +10,7 @@ const {
 const BlogBlackList = {
   BOOKMARKS: "bookmarks",
   DISLIKES: "dislikes",
-  COMMENTS: "commments",
+  COMMENTS: "comments",
   LIKES: "likes",
   AUTHOR: "author",
 };
@@ -28,8 +28,13 @@ class BlogService {
     return blog;
   }
   async getAllBlogs() {
-    
-    return await this.#BlogModel.find({}).populate([{path:"category",select:["title"]},{path:"author",select:["mobile","first_name","last_name","email"]}])
+    return await this.#BlogModel.find({}).populate([
+      { path: "category", select: ["title"] },
+      {
+        path: "author",
+        select: ["mobile", "first_name", "last_name", "email"],
+      },
+    ]);
   }
   async getSingleBlog(id) {
     if (!isValidObjectId(id))

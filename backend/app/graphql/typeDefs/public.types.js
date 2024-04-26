@@ -1,24 +1,45 @@
-const { GraphQLObjectType,GraphQLString, GraphQLList } = require("graphql")
+const {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLScalarType,
+} = require("graphql");
+const { toObject, parseLiteral } = require("../utils");
 
-const AuthorType = new GraphQLObjectType({
-    name: "AuthorType",
-    fields:{
-        _id: {type: GraphQLString},
-        first_name: {type: GraphQLString},
-        last_name: {type: GraphQLString},
-        mobile:{type: GraphQLString},
-    }
-})
+const AnyType = new GraphQLScalarType({
+  name: "AnyType",
+  parseValue: toObject,
+  serialize: toObject,
+  parseLiteral: parseLiteral,
+});
+
+const UserType = new GraphQLObjectType({
+  name: "UserType",
+  fields: {
+    _id: { type: GraphQLString },
+    first_name: { type: GraphQLString },
+    last_name: { type: GraphQLString },
+    mobile: { type: GraphQLString },
+  },
+});
+
 const publicCategoryType = new GraphQLObjectType({
-    name: "publicCategoryType",
-    fields:{
-        _id:{type: GraphQLString},
-        title: {type: GraphQLString},
-    }
+  name: "publicCategoryType",
+  fields: {
+    _id: { type: GraphQLString },
+    title: { type: GraphQLString },
+  },
+});
+const ResponseType = new GraphQLObjectType({
+  name:"ResponseType",
+  fields:{
+      statusCode:{type: GraphQLString},
+      data:{type: AnyType}
+  }
 })
-
 
 module.exports = {
-    AuthorType,
-    publicCategoryType,
-}
+  UserType,
+  publicCategoryType,
+  AnyType,
+  ResponseType
+};

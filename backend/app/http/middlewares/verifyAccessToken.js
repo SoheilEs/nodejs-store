@@ -33,10 +33,27 @@ const VerifyAccessToken = (req, res, next) => {
     next(err);
   }
 };
+const VerifyAccessTokenInGraphQL =async(req) => {
+  try {
+    const token = getToken(req.headers);
+    const { mobile } =  JWT.verify(token, ACCESS_TOKEN_SECRET_KEY)
+    const user = await userModel.findOne(
+      { mobile: mobile },
+      { password: 0, otp: 0 }
+    );
+    if (!user) throw createError.Unauthorized("حساب کاربری یافت نشد");
+    return user
+  } catch (err) {
+    throw createError.Unauthorized("وارد حساب کاربری خود شوید")
+  }
+};
+
 
 
 
 module.exports = {
   VerifyAccessToken,
+  getToken,
+  VerifyAccessTokenInGraphQL
   
 };

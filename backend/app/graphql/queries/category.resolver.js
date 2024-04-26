@@ -6,7 +6,7 @@ const CategoryResolver = {
     type: new GraphQLList(CategoryType),
 
     resolve : async () => {
-
+      
         return await categoryModel.find({parent: undefined})
     }
 }

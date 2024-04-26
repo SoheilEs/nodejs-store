@@ -11,7 +11,7 @@ const {
 const ProductBlackList = {
   BOOKMARKS: "bookmarks",
   DISLIKES: "dislikes",
-  COMMENTS: "commments",
+  COMMENTS: "comments",
   LIKES: "likes",
   SUPPLIER: "supplier",
   WIDTH: "width",
@@ -41,17 +41,27 @@ class ProductService {
   }
   async getProducts(search) {
     if (search) {
-      const products = await this.#productModel.find(
-        {
-          $text: {
-            $search: search,
+      const products = await this.#productModel
+        .find(
+          {
+            $text: {
+              $search: search,
+            },
           },
-        },
-        { _v: 0 }
-      ).populate([{path:"category"},{path:"supplier"}])
+          { _v: 0 }
+        )
+        .populate([{ path: "category" }, { path: "supplier" }]);
       return products;
     }
-    const products = await this.#productModel.find({}, { _v: 0 }).populate([{path:"category"},{path:"supplier",select:["first_name","last_name","mobile","email"]}])
+    const products = await this.#productModel
+      .find({}, { _v: 0 })
+      .populate([
+        { path: "category" },
+        {
+          path: "supplier",
+          select: ["first_name", "last_name", "mobile", "email"],
+        },
+      ]);
     if (products.length === 0) throw createError.NotFound("محصولی یافت نشد");
     return products;
   }

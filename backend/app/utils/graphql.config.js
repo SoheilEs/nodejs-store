@@ -4,7 +4,8 @@ const graphqlConfig = (req,res)=> {
     return{
         schema:graphQLSchema,
         graphiql: true,
-        context:{req,res}}
+        context:{req,res}
+    }
 }
 
 module.exports = {

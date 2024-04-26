@@ -17,3 +17,21 @@
     } 
   }
 }
+
+# Get Comments
+
+{
+  blogs{
+    _id
+    title
+    comments{
+      _id
+      openToComment
+      comment
+      answers{
+        _id
+        comment
+      }
+    }
+  }
+}

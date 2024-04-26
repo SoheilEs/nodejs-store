@@ -1,0 +1,29 @@
+mutation{
+  createCommentForProduct(comment:"yes",
+    productID:"662b6a759cbe1e80243aeb54",
+    parent:""
+  ){
+    statusCode
+    data
+  }
+}
+
+
+mutation{
+  createCommentForCourse(comment:"yes",
+    courseID:"662b6a759cbe1e80243aeb54",
+    parent:""
+  ){
+    statusCode
+    data
+  }
+}
+mutation{
+  createCommentForBlogs(comment:"yes",
+    blogID:"662b6a759cbe1e80243aeb54",
+    parent:""
+  ){
+    statusCode
+    data
+  }
+}

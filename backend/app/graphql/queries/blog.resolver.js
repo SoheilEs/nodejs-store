@@ -1,13 +1,24 @@
-const { GraphQLList } = require("graphql");
+const { GraphQLList, GraphQLString } = require("graphql");
 const { BlogType } = require("../typeDefs/blog.type");
 const { blogModel } = require("../../models/blogs");
 
-
 const BlogResolver = {
   type: new GraphQLList(BlogType),
-  resolve: async ()=>{ 
-    
-    return await blogModel.find({}).populate([{path : "author" },{path : "category"}])}
+  args: {
+    category: { type: GraphQLString },
+  },
+  resolve: async (_, args) => {
+    const { category } = args;
+    const findQuery = category ? { category } : {};
+    return await blogModel
+      .find(findQuery)
+      .populate([
+        { path: "author" },
+        { path: "category" },
+        { path: "comments.user" },
+        { path: "comments.answers.user" },
+      ]);
+  },
 };
 
 module.exports = {
