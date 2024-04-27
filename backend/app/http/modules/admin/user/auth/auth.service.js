@@ -52,8 +52,10 @@ class AuthService {
     };
   }
   async sendRefreshToken(refreshToken) {
+    
     const mobile = await VerifyRefreshToken(refreshToken);
     const user = await this.checkExistUser(mobile);
+    if(!user) throw createError.BadRequest("کاربری یافت نشد")
     const accessToken = await signAccessToken(user._id);
     const newRefreshToken = await signRfreshToken(user._id);
     return {

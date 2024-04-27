@@ -7,7 +7,7 @@ const {
 } = require("../../http/middlewares/verifyAccessToken");
 const { StatusCodes } = require("http-status-codes");
 const { ResponseType } = require("../typeDefs/public.types");
-const { copyObject } = require("../../utils/function");
+
 const { isValidObjectId } = require("mongoose");
 const { courseModel } = require("../../models/course");
 const { productModel } = require("../../models/products");

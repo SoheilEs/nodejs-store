@@ -45,13 +45,20 @@ const signRfreshToken = (userId) => {
 const VerifyRefreshToken = (token) => {
   return new Promise((resolve, reject) => {
     JWT.verify(token, REFRESH_TOKEN_KEY, async (error, payload) => {
-      if (error) reject(createError.Unauthorized("وارد حساب کاربری خود شوید"));
-      const { mobile } = payload || {};
-      const user = await userModel.findOne({ mobile }, { password: 0, otp: 0 });
-      if (!user) reject(createError.Unauthorized("حساب کاربری یافت نشد"));
-      const refreshToken = await redisClient.GET(user._id.valueOf());
-      if (token === refreshToken) resolve(user.mobile);
-      reject(createError.Unauthorized("ورود مجدد به حساب کاربری انجام نشد"));
+      try{
+        if (error) reject(createError.Unauthorized("وارد حساب کاربری خود شوید"));
+        const { mobile } = payload || {};
+        const user = await userModel.findOne({ mobile }, { password: 0, otp: 0 });
+        if (!user) reject(createError.Unauthorized("حساب کاربری یافت نشد"));
+        const refreshToken = await redisClient.GET(user?._id.valueOf());
+        if (token === refreshToken) resolve(user.mobile);
+        else reject(createError.Unauthorized("وارد حساب کاربری خود شوید"))
+      }catch(error){
+        reject(createError.Unauthorized("ورود مجدد به حساب کاربری انجام نشد"));
+      }
+       
+        
+      
     });
   });
 };

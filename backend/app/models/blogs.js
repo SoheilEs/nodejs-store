@@ -17,9 +17,9 @@ const blogSchema = new Schema(
     tags: { type: [String], default: [] },
     category: { type: Types.ObjectId, ref: "Category", required: true },
     comments: { type: [commentSchema], default: [] },
-    likes: { type: [Types.ObjectId], ref: "User", default: [] },
-    dislikes: { type: [Types.ObjectId], ref: "User", default: [] },
-    bookmarks: { type: [Types.ObjectId], ref: "User", default: [] },
+    likes: { type: [Types.ObjectId], default: [],ref:"user" },
+    dislikes: { type: [Types.ObjectId], default: [],ref:"user"  },
+    bookmarks: { type: [Types.ObjectId], default: [],ref:"user"   },
   },
   {
     timestamps: true,
