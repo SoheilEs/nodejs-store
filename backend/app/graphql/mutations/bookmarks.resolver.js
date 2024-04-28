@@ -8,7 +8,7 @@ const { VerifyAccessTokenInGraphQL } = require("../../http/middlewares/verifyAcc
 const { blogModel } = require("../../models/blogs");
 const { courseModel } = require("../../models/course");
 
-const dislikeProduct = {
+const bookmarkProduct = {
     type: ResponseType,
     args:{
         productID: {type:GraphQLString}
@@ -20,22 +20,19 @@ const dislikeProduct = {
         if(!isValidObjectId(productID)) throw createHttpError.BadRequest("شناسه محصول نادرست است")
         const product = await productModel.findById(productID)
         if(!product) throw createHttpError.NotFound("محصولی یافت نشد")
-        let dislikedProduct = await productModel.findOne({
+        let bookmarkProduct = await productModel.findOne({
             _id: product._id,
-            dislikes: user._id
+            bookmarks: user._id
         })
-        let likedProduct = await productModel.findOne({
-            _id: product._id,
-            likes: user._id
-        })
+       
     
-        const updateQuery = dislikedProduct ? {$pull:{dislikes:user._id}} : {$push:{dislikes:user._id}}
+        const updateQuery = bookmarkProduct ? {$pull:{bookmarks:user._id}} : {$push:{bookmarks:user._id}}
         await productModel.updateOne({_id:product._id},updateQuery)
         let message;
-        if(!dislikedProduct){
-           if(likedProduct) await productModel.updateOne({_id:product._id},{$pull:{likes:user._id}})
-            message ="نپسندیدن محصول انجام شد"
-        }else message = "نپسندیدن محصول لغو شد"
+        if(!bookmarkProduct){
+        
+            message = "محصول ذخیره شد"
+        }else message = "ذخیره محصول لغو شد"
         return{
             statusCode: StatusCodes.CREATED,
             data:{
@@ -44,7 +41,7 @@ const dislikeProduct = {
         }
     }
 }
-const dislikeBlog = {
+const bookmarkBlog = {
     type:ResponseType,
     args:{
         blogID: {type:GraphQLString}
@@ -55,22 +52,17 @@ const dislikeBlog = {
         if(!isValidObjectId(blogID)) throw createHttpError.BadRequest("شناسه محصول نادرست است")
         const blog = await blogModel.findById(blogID)
         if(!blog) throw createHttpError.NotFound("محصولی یافت نشد")
-        let dislikedBlog = await blogModel.findOne({
+        const bookmarkBlog = await blogModel.findOne({
             _id: blog._id,
-            dislikes: user._id
+            bookmarks: user._id
         })
-        let likedBlog = await blogModel.findOne({
-            _id: blog._id,
-            likes: user._id
-        })
-        const updateQuery = dislikedBlog ? {$pull:{dislikes:user._id}} : {$push:{dislikes:user._id}}
+       
+        const updateQuery = bookmarkBlog ? {$pull:{bookmarks:user._id}} : {$push:{bookmarks:user._id}}
         await blogModel.updateOne({_id:blog._id},updateQuery)
         let message;
-        if(!dislikedBlog){
-           if(likedBlog) await blogModel.updateOne({_id:blog._id},{$pull:{likes:user._id}})
-            message = "نپسندیدن بلاگ انجام شد"
-            
-        }else message = "نپسندیدن بلاگ لغو"
+        if(!bookmarkBlog ){
+            message = "ذخیره بلاگ انجام شد"
+        }else message = "ذخیره بلاگ انجام لغو شد"
         return{
             statusCode: StatusCodes.CREATED,
             data:{
@@ -79,7 +71,7 @@ const dislikeBlog = {
         }
     }
 }
-const dislikeCourse = {
+const bookmarkCourse  = {
     type:ResponseType,
     args:{
         courseID: {type:GraphQLString}
@@ -90,21 +82,17 @@ const dislikeCourse = {
         if(!isValidObjectId(courseID)) throw createHttpError.BadRequest("شناسه محصول نادرست است")
         const course = await courseModel.findById(courseID)
         if(!course) throw createHttpError.NotFound("محصولی یافت نشد")
-        let dislikedCourse = await courseModel.findOne({
+        const bookmarkCourse = await courseModel.findOne({
             _id: course._id,
-            dislikes: user._id
+            bookmarks: user._id
         })
-        let likedCourse = await courseModel.findOne({
-            _id: course._id,
-            likes: user._id
-        })
-        const updateQuery = dislikedCourse ? {$pull:{dislikes:user._id}} : {$push:{dislikes:user._id}}
+        const updateQuery = bookmarkCourse ? {$pull:{bookamrks:user._id}} : {$push:{bookamrks:user._id}}
         await courseModel.updateOne({_id:course._id},updateQuery)
         let message;
-        if(!dislikedCourse){
-            if(likedCourse) await courseModel.updateOne({_id:course._id},{$pull:{likes:user._id}})
-            message = "نپسندیدن دوره انجام شد"
-        }else message = "نپسندیدن دوره لغو شد"
+        if(!bookmarkCourse){
+            
+            message = "ذخیره دوره انجام شد"
+        }else message = "ذخیره دوره لغو شد"
         return{
             statusCode: StatusCodes.CREATED,
             data:{
@@ -115,7 +103,7 @@ const dislikeCourse = {
 }
 
 module.exports={
-    dislikeProduct,
-    dislikeBlog,
-    dislikeCourse
+    bookmarkProduct,
+    bookmarkBlog,
+    bookmarkCourse
 }

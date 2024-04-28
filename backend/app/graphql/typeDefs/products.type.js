@@ -7,6 +7,7 @@ const {
 const { publicCategoryType, UserType } = require("./public.types");
 const { CommentType } = require("./comments.type");
 
+
 const FeaturesType = new GraphQLObjectType({
   name: "FeaturesType",
   fields: {
@@ -38,7 +39,10 @@ const ProductType = new GraphQLObjectType({
     format: { type: GraphQLString },
     supplier: { type: UserType },
     features: { type: FeaturesType },
-    comments:{type: new GraphQLList(CommentType)}
+    comments:{type: new GraphQLList(CommentType)},
+    likes:{type: new GraphQLList(UserType)},
+    dislikes:{type: new GraphQLList(UserType)},
+    bookmarks:{type: new GraphQLList(UserType)},
   },
 });
 

@@ -17,6 +17,9 @@ const BlogResolver = {
         { path: "category" },
         { path: "comments.user" },
         { path: "comments.answers.user" },
+        { path: "likes" },
+        { path: "dislikes" },
+        { path: "bookmarks" },
       ]);
   },
 };

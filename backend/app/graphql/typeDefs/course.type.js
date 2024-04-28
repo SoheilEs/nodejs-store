@@ -7,6 +7,7 @@ const {
 const { publicCategoryType, UserType } = require("./public.types");
 const { CommentType } = require("./comments.type");
 
+
 const EpisodeType = new GraphQLObjectType({
   name: "EpisodeType",
   fields: {
@@ -50,7 +51,10 @@ const CourseType = new GraphQLObjectType({
     chapters: { type: new GraphQLList(ChapterType) },
     imageURL: { type: GraphQLString },
     totalTime: { type: GraphQLString },
-    comments:{type: new GraphQLList(CommentType)}
+    comments:{type: new GraphQLList(CommentType)},
+    likes:{type: new GraphQLList(UserType)},
+    dislikes:{type: new GraphQLList(UserType)},
+    bookmarks:{type: new GraphQLList(UserType)},
   },
 });
 

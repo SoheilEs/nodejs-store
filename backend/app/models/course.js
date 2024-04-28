@@ -39,9 +39,9 @@ const courseSchema = new Schema(
     tags: { type: [String], default: [] },
     category: { type: Types.ObjectId, ref: "Category", required: true },
     comments: { type: [commentSchema], default: []},
-    likes: { type: [Types.ObjectId], default: [],ref:"user" },
-    dislikes: { type: [Types.ObjectId], default: [],ref:"user"  },
-    bookmarks: { type: [Types.ObjectId], default: [],ref:"user"   },
+    likes: { type: [Types.ObjectId], default: [],ref:"User" },
+    dislikes: { type: [Types.ObjectId], default: [],ref:"User"  },
+    bookmarks: { type: [Types.ObjectId], default: [],ref:"User"   },
     price: { type: Number, default: 0 },
     discount: { type: Number, default: 0 },
     type: { type: String, default: "free", required: true }, // پولی یا رایگان
