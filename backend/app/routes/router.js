@@ -18,6 +18,9 @@ const router = require("express").Router();
 const {graphqlHTTP} = require("express-graphql")
 
 const { graphqlConfig } = require("../utils/graphql.config");
+const { PaymentRoutes } = require("./api/paymentGetway/payment.routes");
+const { SupportRouts } = require("./support/support.routes");
+
 
 router.use("/", HomePageRoutes);
 router.use("/user", UserAuthRoutes);
@@ -30,6 +33,10 @@ router.use("/users",VerifyAccessToken,UserRoutes)
 router.use("/roles",VerifyAccessToken,RoleRoutes)
 router.use("/permissions",VerifyAccessToken,PermissionRoutes)
 router.use("/graphql",graphqlHTTP(graphqlConfig))
+router.use("/payment",PaymentRoutes)
+router.use("/support",SupportRouts)
+
+
 module.exports = {
   AllRoutes: router,
 };

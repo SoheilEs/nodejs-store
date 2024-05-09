@@ -5,7 +5,8 @@ const { ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_KEY } = require("./constans");
 const redisClient = require("./init_redis");
 const fs = require("fs");
 const path = require("path");
-const { match } = require("assert");
+
+
 const randomNumberGen = () => {
   return Math.floor(Math.random() * 90000 + 10000);
 };
@@ -158,6 +159,109 @@ function getTimeOfCourse(chapters=[]){
 
   return hours + ":" + minutes + ":" + seconds;
 }
+
+async function getBasketOfUser(userID,discount={}){
+  const userDetail = await userModel.aggregate([
+    {
+        $match:{ _id: userID},
+
+    },{
+        $project:{
+            basket:1
+        }
+    },
+    {
+        $lookup:{
+            from:"products",
+            localField:"basket.product.productID",
+            foreignField:"_id",
+            as:"productDetail"
+        }
+    },{
+        $lookup:{
+            from:"courses",
+            localField:"basket.course.courseID",
+            foreignField: "_id",
+            as:"courseDetail"
+        }
+    }
+    ,{
+        $addFields:{
+            "productDetail":{
+                $function:{
+
+                    body: function(productDetail,product){
+                       return productDetail.map(function(pr){
+                            const count = product.find(item=> item.productID.valueOf()=== pr._id.valueOf()).count
+                            const totalPrice = count * pr.price
+                            return{
+                                ...pr,
+                                basketCount: count,
+                                totalPrice:  totalPrice ,
+                                finalPrice: totalPrice - ((pr.discount / 100) * totalPrice),
+                            }
+                        } )
+                    },
+                    args:["$productDetail","$basket.product"],
+                    lang:"js"
+                }
+            }
+        ,
+    
+            "courseDetail":{
+                $function:{
+
+                    body: function(courseDetail){
+                       return courseDetail.map(function(cr){
+                
+                            const totalPrice = cr.price
+                            return{
+                                ...cr,
+                                totalPrice:  totalPrice ,
+                                finalPrice:  totalPrice - ((cr.discount / 100) * totalPrice),
+                            }
+                        } )
+                    },
+                    args:["$courseDetail"],
+                    lang:"js"
+                }
+            },
+            "payDetail":{
+                $function:{
+                    body:function(courseDetail,productDetail,product){
+                        
+                        const courseAmount = courseDetail.reduce((total,cr)=>{
+                            return total + (cr.price - (cr.discount / 100) * cr.price)
+                        },0)
+                        const productAmount = productDetail.reduce((total,pr)=>{
+                            
+                            const count = product.find(item => item.productID.valueOf() === pr._id.valueOf()).count
+                
+                            const totalPrice = count * pr.price
+                            return total + (totalPrice - (pr.discount / 100) * pr.price)
+                        },0)
+                        const courseIds = courseDetail.map(item=> item._id.valueOf())
+                        const productIds = productDetail.map(item=> item._id.valueOf())
+                      
+                        return{
+                            courseAmount,
+                            productAmount,
+                            paymentAmount: courseAmount + productAmount,
+                            courseIds,
+                            productIds,
+                        }
+                    },
+                    args:["$courseDetail","$productDetail","$basket.product"],
+                    lang:"js"
+                }
+            }
+        }
+    },
+ {$project:{"basket":0}}
+])
+return userDetail
+}
+
 module.exports = {
   randomNumberGen,
   signAccessToken,
@@ -169,5 +273,6 @@ module.exports = {
   setFeatures,
   deleteInvalidPropertyInObject,
   getTime,
-  getTimeOfCourse
+  getTimeOfCourse,
+  getBasketOfUser
 };

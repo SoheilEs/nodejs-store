@@ -8,6 +8,10 @@ const swaggerUi = require("swagger-ui-express")
 const swaggerJsDoc = require("swagger-jsdoc")
 const cors = require("cors")
 const dotenv = require("dotenv")
+const expressEjsLayouts = require("express-ejs-layouts")
+const { initialSocket } = require("./utils/initSocket")
+const { socketHandler } = require("./socket.io")
+
 dotenv.config()
 
 module.exports = class Application{
@@ -18,6 +22,7 @@ module.exports = class Application{
         this.#PORT=PORT
         this.#DB_URI= DB_URI
         this.configApplication()
+        this.initTempleteEngine()
         this.connectToMongoDB()
         this.initRedis()
         this.createServer()
@@ -55,7 +60,11 @@ module.exports = class Application{
         ))
     }
     createServer(){
-        this.#app.listen(this.#PORT,()=>{
+        const http = require("http")
+        const server = http.createServer(this.#app)
+        const io = initialSocket(server)
+        socketHandler(io)
+        server.listen(this.#PORT,()=>{
             console.log("Run > http://localhost:" + this.#PORT);
         })
     }
@@ -78,6 +87,14 @@ module.exports = class Application{
     }
     createRoutes(){
         this.#app.use(AllRoutes)
+    }
+    initTempleteEngine(){
+        this.#app.use(expressEjsLayouts)
+        this.#app.set("view engine","ejs")
+        this.#app.set("views",path.join(__dirname,"..","resource","views"))
+        this.#app.set("layout extractStyles",true)
+        this.#app.set("layout extractScripts",true)
+        this.#app.set("layout","./layouts/master")
     }
     errorHandling(){
         this.#app.use((req,res,next)=>{

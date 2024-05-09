@@ -6,6 +6,9 @@ const { productModel } = require("../../models/products");
 const { courseModel } = require("../../models/course");
 const { ProductType } = require("../typeDefs/products.type");
 const { CourseType } = require("../typeDefs/course.type");
+const { userModel } = require("../../models/users");
+const { UserType, AnyType } = require("../typeDefs/public.types");
+const { getBasketOfUser } = require("../../utils/function");
 
 const getBookmarkedBolgs = {
     type:new GraphQLList(BlogType),
@@ -20,8 +23,9 @@ const getBookmarkedBolgs = {
             { path: "likes" },
             { path: "dislikes" },
             { path: "bookmarks" },
+            
           ])
-         
+         console.log(blogs);
         return blogs
 
     }
@@ -60,8 +64,34 @@ const getBookmarkedProducts = {
     }
 }
 
+
+const getUserBasket = {
+    type: AnyType,
+    resolve:async(_,args,context)=>{
+        const user =await VerifyAccessTokenInGraphQL(context.req)
+        const userDetail = await getBasketOfUser(user._id)
+        return userDetail
+    }
+}
+const getProductInBasket = {
+    type:new GraphQLList(UserType),
+    resolve:async(_,args,context)=>{
+        const user =await VerifyAccessTokenInGraphQL(context.req)
+        return await userModel.findOne({_id:user._id}).populate([{path:"basket"}])
+    }
+}
+const getCourseInBasket = {
+    type:new GraphQLList(UserType),
+    resolve:async(_,args,context)=>{
+        const user =await VerifyAccessTokenInGraphQL(context.req)
+        return await userModel.findOne({_id:user._id}).populate([{path:"basket"}])
+    }
+}
 module.exports = {
     getBookmarkedBolgs,
     getBookmarkedCourses,
-    getBookmarkedProducts
+    getBookmarkedProducts,
+    getProductInBasket,
+    getCourseInBasket,
+    getUserBasket
 }

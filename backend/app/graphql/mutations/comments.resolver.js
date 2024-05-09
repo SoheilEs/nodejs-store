@@ -246,5 +246,7 @@ const getComment = async (model, id) => {
 module.exports = {
   CommentResolver,
   createCommentForProduct,
-  createCommentForCourses
+  createCommentForCourses,
+  checkExistCourse,
+  checkExistProduct
 };

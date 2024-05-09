@@ -1,5 +1,19 @@
 const { Schema, models, model, Types } = require("mongoose");
 
+
+const ProductSchema = new Schema({
+  productID:{type:Types.ObjectId,ref:"Product"},
+  count:{type:Number,default:1}
+})
+const CourseSchema = new Schema({
+  courseID:{type:Types.ObjectId, ref:"Course"},
+  count:{type:Number,default:1}
+  
+})
+const BasketSchema = new Schema({
+    course:{type:[CourseSchema],default:[]},
+    product:{type:[ProductSchema],default:[]}
+})
 const UserSchema = new Schema({
   first_name: { type: String},
   last_name: { type: String},
@@ -18,7 +32,9 @@ const UserSchema = new Schema({
   discount: { type: Number, default: 0 },
   birthday: { type: String },
   Role:{type:String,default:"USER"},
-  courses:{type:[Types.ObjectId],ref:"Course",default:[]}
+  courses:{type:[Types.ObjectId],ref:"Course",default:[]},
+  products:{type:[Types.ObjectId],ref:"Product",default:[]},
+  basket:{type: BasketSchema}
 },{
   timestamps:true,
   toJSON:{
