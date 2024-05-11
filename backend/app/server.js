@@ -11,6 +11,10 @@ const dotenv = require("dotenv")
 const expressEjsLayouts = require("express-ejs-layouts")
 const { initialSocket } = require("./utils/initSocket")
 const { socketHandler } = require("./socket.io")
+const session = require("express-session")
+const cookieParser = require("cookie-parser")
+const { COOKIE_PARSER_SECRET } = require("./utils/constans")
+const { clientHelper } = require("./utils/client")
 
 dotenv.config()
 
@@ -22,6 +26,7 @@ module.exports = class Application{
         this.#PORT=PORT
         this.#DB_URI= DB_URI
         this.configApplication()
+        this.initClientSession()
         this.initTempleteEngine()
         this.connectToMongoDB()
         this.initRedis()
@@ -95,6 +100,21 @@ module.exports = class Application{
         this.#app.set("layout extractStyles",true)
         this.#app.set("layout extractScripts",true)
         this.#app.set("layout","./layouts/master")
+        this.#app.use((req,res,next)=>{
+            this.#app.locals = clientHelper(req,res)
+            next()
+        })
+    }
+    initClientSession(){
+        this.#app.use(cookieParser(COOKIE_PARSER_SECRET))
+        this.#app.use(session({
+            secret: COOKIE_PARSER_SECRET,
+            resave: true,
+            saveUninitialized: true,
+            cookie:{
+                secure: true
+            }
+        }))
     }
     errorHandling(){
         this.#app.use((req,res,next)=>{

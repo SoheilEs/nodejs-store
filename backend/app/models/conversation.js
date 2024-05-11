@@ -5,7 +5,12 @@ const { Schema, Types, models, model } = require("mongoose");
 const message = new Schema({
     sender:{type: Types.ObjectId,ref:"User"},
     message:{type: String},
-    dateTime:{type: String}
+    dateTime:{type: Number}
+})
+const location = new Schema({
+    sender:{type: Types.ObjectId,ref:"User"},
+    location:{type: Object,default:{}},
+    dateTime:{type: Number}
 })
 
 const roomSchema = new Schema({
@@ -14,6 +19,10 @@ const roomSchema = new Schema({
     image:{type: String},
     messages:{
         type:[message],
+        default:[]
+    },
+    locations:{
+        type:[location],
         default:[]
     }
 })
